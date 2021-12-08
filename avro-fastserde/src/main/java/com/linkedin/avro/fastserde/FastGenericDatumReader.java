@@ -39,6 +39,10 @@ public class FastGenericDatumReader<T> implements DatumReader<T> {
     this.readerSchema = readerSchema;
     this.cache = cache != null ? cache : FastSerdeCache.getDefaultInstance();
 
+    setRegularImplIfFastNotSupported();
+  }
+
+  private void setRegularImplIfFastNotSupported() {
     if (!Utils.isSupportedAvroVersionsForDeserializer()) {
       this.cachedFastDeserializer.set(getRegularAvroImpl(writerSchema, readerSchema));
       if (LOGGER.isDebugEnabled()) {
@@ -66,6 +70,9 @@ public class FastGenericDatumReader<T> implements DatumReader<T> {
     if (readerSchema == null) {
       readerSchema = writerSchema;
     }
+
+    cachedFastDeserializer.set(null);
+    setRegularImplIfFastNotSupported();
   }
 
   @Override

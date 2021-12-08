@@ -24,6 +24,11 @@ public class FastGenericDatumWriter<T> implements DatumWriter<T> {
   public FastGenericDatumWriter(Schema schema, FastSerdeCache cache) {
     this.writerSchema = schema;
     this.cache = cache != null ? cache : FastSerdeCache.getDefaultInstance();
+
+    setRegularImplIfFastNotSupported();
+  }
+
+  private void setRegularImplIfFastNotSupported() {
     if (!Utils.isSupportedAvroVersionsForSerializer()) {
       this.cachedFastSerializer = getRegularAvroImpl(writerSchema);
       if (LOGGER.isDebugEnabled()) {
@@ -32,11 +37,11 @@ public class FastGenericDatumWriter<T> implements DatumWriter<T> {
                 + " versions are supported: " + Utils.getAvroVersionsSupportedForSerializer()
                 + ", so will skip the FastSerializer generation");
       }
-    } else if (!FastSerdeCache.isSupportedForFastSerializer(schema.getType())) {
+    } else if (!FastSerdeCache.isSupportedForFastSerializer(writerSchema.getType())) {
       // For unsupported schema type, we won't try to fetch it from FastSerdeCache since it is inefficient.
       this.cachedFastSerializer = getRegularAvroImpl(writerSchema);
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Skip the FastGenericSerializer generation since read schema type: " + schema.getType()
+        LOGGER.debug("Skip the FastGenericSerializer generation since read schema type: " + writerSchema.getType()
             + " is not supported");
       }
     }
@@ -45,6 +50,9 @@ public class FastGenericDatumWriter<T> implements DatumWriter<T> {
   @Override
   public void setSchema(Schema schema) {
     writerSchema = schema;
+
+    cachedFastSerializer = null;
+    setRegularImplIfFastNotSupported();
   }
 
   @Override
