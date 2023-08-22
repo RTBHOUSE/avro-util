@@ -125,10 +125,12 @@ public abstract class LogicalTypesTestBase {
             FunctionThrowingIOException<T, ByteBuffer> toByteBuffer) throws IOException {
         // given
         Schema schema = data.getSchema();
-        FastSerializer<T> fastGenericSerializer = new FastGenericSerializerGenerator<T>(schema, classesDir, classLoader, null)
+        FastSerializer<T> fastGenericSerializer = new FastGenericSerializerGenerator<T>(
+                schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new GenericData()))
                 .generateSerializer();
 
-        FastSerializer<T> fastSpecificSerializer = new FastSpecificSerializerGenerator<T>(schema, classesDir, classLoader, null)
+        FastSerializer<T> fastSpecificSerializer = new FastSpecificSerializerGenerator<T>(
+                schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new SpecificData()))
                 .generateSerializer();
 
         GenericDatumWriter<T> genericDatumWriter = new GenericDatumWriter<>(
@@ -171,11 +173,11 @@ public abstract class LogicalTypesTestBase {
         Supplier<Decoder> decoderSupplier = () -> DecoderFactory.get().binaryDecoder(bytes, null);
 
         FastDeserializer<GenericData.Record> fastGenericDeserializer = new FastGenericDeserializerGenerator<GenericData.Record>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new GenericData()))
                 .generateDeserializer();
 
         FastDeserializer<T> fastSpecificDeserializer = new FastSpecificDeserializerGenerator<T>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new SpecificData()))
                 .generateDeserializer();
 
         GenericDatumReader<GenericData.Record> genericDatumReader = new GenericDatumReader<>(
