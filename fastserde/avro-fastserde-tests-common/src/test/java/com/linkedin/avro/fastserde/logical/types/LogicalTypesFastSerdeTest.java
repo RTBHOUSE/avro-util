@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
@@ -29,7 +28,6 @@ import com.linkedin.avro.fastserde.generated.avro.JustSimpleEnum;
 import com.linkedin.avro.fastserde.generated.avro.LocalTimestampRecord;
 import com.linkedin.avroutil1.compatibility.AvroVersion;
 
-@Ignore
 public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
 
     @DataProvider
