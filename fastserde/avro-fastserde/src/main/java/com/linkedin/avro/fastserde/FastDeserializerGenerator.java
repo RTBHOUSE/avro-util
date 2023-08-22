@@ -49,12 +49,10 @@ import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class FastDeserializerGenerator<T, U extends GenericData> extends FastDeserializerGeneratorBase<T, U> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(FastDeserializerGenerator.class);
+
   private static final String DECODER = "decoder";
   private static final String VAR_NAME_FOR_REUSE = "reuse";
   private static int FIELDS_PER_POPULATION_METHOD = 100;
@@ -67,14 +65,14 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
    * and Avro treats null as a sentinel value indicating that it should
    * instantiate a new object instead of re-using.
    */
-  private static final Supplier<JExpression> EMPTY_SUPPLIER = () -> JExpr._null();
+  private static final Supplier<JExpression> EMPTY_SUPPLIER = JExpr::_null;
 
   private JMethod constructor;
-  private Map<Integer, Schema> schemaMap = new HashMap<>();
-  private Map<Integer, JVar> schemaVarMap = new HashMap<>();
-  private Map<String, JMethod> deserializeMethodMap = new HashMap<>();
-  private Map<String, JMethod> skipMethodMap = new HashMap<>();
-  private Map<JMethod, Set<Class<? extends Exception>>> exceptionFromMethodMap = new HashMap<>();
+  private final Map<Integer, Schema> schemaMap = new HashMap<>();
+  private final Map<Integer, JVar> schemaVarMap = new HashMap<>();
+  private final Map<String, JMethod> deserializeMethodMap = new HashMap<>();
+  private final Map<String, JMethod> skipMethodMap = new HashMap<>();
+  private final Map<JMethod, Set<Class<? extends Exception>>> exceptionFromMethodMap = new HashMap<>();
 
   FastDeserializerGenerator(boolean useGenericTypes, Schema writer, Schema reader, File destination,
       ClassLoader classLoader, String compileClassPath, U modelData) {
@@ -94,7 +92,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       constructor.body().assign(JExpr.refthis(readerSchemaVar.name()), constructorParam);
 
       Schema aliasedWriterSchema = writer;
-      /**
+      /*
        * {@link Schema.applyAliases} is not working correctly in avro-1.4 since there is a bug in this function:
        * {@literal Schema#getFieldAlias}.
        **/
@@ -109,7 +107,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       }
 
       JClass readerSchemaClass = schemaAssistant.classFromSchema(reader);
-      /**
+      /*
        * Writer schema could be using a different namespace from the reader schema, so we should always
        * use the reader schema class for generic type.
        */
@@ -753,7 +751,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
     }
 
     final JVar arrayVar = action.getShouldRead() ? declareValueVar(name, effectiveArrayReaderSchema, parentBody, true, false, true) : null;
-    /**
+    /*
      * Special optimization for float array by leveraging {@link BufferBackedPrimitiveFloatList}.
      *
      * TODO: Handle other primitive element types here.
@@ -791,7 +789,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       }
       JInvocation finalNewArrayExp = newArrayExp;
 
-      /** N.B.: Need to use the erasure because instanceof does not support generic types */
+      /* N.B.: Need to use the erasure because instanceof does not support generic types */
       ifCodeGen(parentBody, finalReuseSupplier.get()._instanceof(abstractErasedArrayClass), then2 -> {
         then2.assign(arrayVar, JExpr.cast(abstractErasedArrayClass, finalReuseSupplier.get()));
         then2.invoke(arrayVar, "clear");
@@ -864,7 +862,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       // More GC-efficient
       stringableArgExpr = JExpr.direct(DECODER + ".readString()");
     } else {
-      /**
+      /*
        * {@link BinaryDecoder#readString()} is not available in Avro 1.4 and 1.5.
        */
       stringableArgExpr = JExpr.direct(DECODER + ".readString(null).toString()");
@@ -876,7 +874,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       JBlock parentBody, FieldAction action, BiConsumer<JBlock, JExpression> putMapIntoParent,
       Supplier<JExpression> reuseSupplier) {
 
-    /**
+    /*
      * Determine the action symbol for Map value. {@link ResolvingGrammarGenerator} generates
      * resolving grammar symbols with reversed order of production sequence. If this symbol is
      * a terminal, its production list will be <code>null</code>. Otherwise the production list
@@ -1018,7 +1016,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       if (reuseSupplier.get().equals(JExpr._null())) {
         body.assign(fixedBuffer, JExpr.direct(" new byte[" + schema.getFixedSize() + "]"));
       } else {
-        /**
+        /*
          * Here will check whether the length of the reused fixed is same as the one to be deserialized or not.
          * If not, here will initialize a new byte array to store it.
          */
@@ -1091,7 +1089,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
         newEnum = schemaAssistant.getEnumValueByIndex(schema, enumValueExpr, getSchemaExpr(schema));
       } else {
 
-        /**
+        /*
          * Define a class variable to keep the mapping between the enum index from the writer schema and the corresponding
          * one in the reader schema, and there are some cases:
          * 1. If the enum index doesn't exist in this map, runtime will throw RuntimeException.
@@ -1101,7 +1099,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
 
         JVar tempEnumMappingVar = constructor.body().decl(codeModel.ref(HashMap.class),  getUniqueName("tempEnumMapping"),
             JExpr._new(codeModel.ref(HashMap.class)).arg(JExpr.lit(enumAdjustAction.adjustments.length)));
-        /**
+        /*
          * Populate the global enum mapping based on the enum adjustment.
          */
         for (int i = 0; i < enumAdjustAction.adjustments.length; i++) {
@@ -1126,19 +1124,19 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
 
         JVar lookupResult = body.decl(codeModel._ref(Object.class), getUniqueName("enumIndexLookupResult"),
             enumMappingVar.invoke("get").arg(enumIndex));
-        /**
+        /*
          * Found the enum index mapping.
          */
         JConditional ifBlock = body._if(lookupResult._instanceof(codeModel.ref(Integer.class)));
         JExpression ithValResult =
             schemaAssistant.getEnumValueByIndex(schema, JExpr.cast(codeModel.ref(Integer.class), lookupResult), getSchemaExpr(schema));
         ifBlock._then().assign((JVar) newEnum, ithValResult);
-        /**
+        /*
          * Unknown enum in reader schema.
          */
         JConditional elseIfBlock = ifBlock._elseif(lookupResult._instanceof(codeModel.ref(AvroTypeException.class)));
         elseIfBlock._then()._throw(JExpr.cast(codeModel.ref(AvroTypeException.class), lookupResult));
-        /**
+        /*
          * Unknown enum in writer schema.
          */
         elseIfBlock._else()._throw(JExpr._new(codeModel.ref(RuntimeException.class))
@@ -1240,7 +1238,8 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
     if (!useGenericTypes) {
       return null;
     }
-    /**
+
+    /*
      * TODO: In theory, we should only need Record, Enum and Fixed here since only these types require
      * schema for the corresponding object initialization in Generic mode.
      */

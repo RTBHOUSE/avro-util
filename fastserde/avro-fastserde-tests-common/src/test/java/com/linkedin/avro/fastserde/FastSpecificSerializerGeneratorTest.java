@@ -110,7 +110,7 @@ public class FastSpecificSerializerGeneratorTest {
     Assert.assertEquals(1.0f, getField(record, "testFloat"));
     Assert.assertEquals(1.0f, getField(record, "testFloatUnion"));
     Assert.assertEquals(true, getField(record, "testBoolean"));
-    Assert.assertEquals(true, ((Boolean) getField(record, "testBooleanUnion")).booleanValue());
+    Assert.assertTrue((Boolean) getField(record, "testBooleanUnion"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytes"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytesUnion"));
   }
