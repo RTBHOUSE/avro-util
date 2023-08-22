@@ -130,17 +130,17 @@ public class FastSpecificDeserializerGeneratorTest {
 
     // then
     Assert.assertEquals(1, getField(record, "testInt"));
-    Assert.assertEquals(new Integer(1), getField(record, "testIntUnion"));
+    Assert.assertEquals(1, getField(record, "testIntUnion"));
     Assert.assertEquals(new Utf8("aaa"), getField(record, "testString"));
     Assert.assertEquals(new Utf8("aaa"), getField(record, "testStringUnion"));
-    Assert.assertEquals(1l, getField(record, "testLong"));
-    Assert.assertEquals(new Long(1), getField(record, "testLongUnion"));
+    Assert.assertEquals(1L, getField(record, "testLong"));
+    Assert.assertEquals(1L, getField(record, "testLongUnion"));
     Assert.assertEquals(1.0, (Double) getField(record, "testDouble"), 0);
-    Assert.assertEquals(new Double(1.0), getField(record, "testDoubleUnion"));
+    Assert.assertEquals(1.0, getField(record, "testDoubleUnion"));
     Assert.assertEquals(1.0f, (Float) getField(record, "testFloat"), 0);
-    Assert.assertEquals(new Float(1.0f), getField(record, "testFloatUnion"));
+    Assert.assertEquals(1.0f, getField(record, "testFloatUnion"));
     Assert.assertEquals(true, getField(record, "testBoolean"));
-    Assert.assertEquals(new Boolean(true), getField(record, "testBooleanUnion"));
+    Assert.assertEquals(true, getField(record, "testBooleanUnion"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytes"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytesUnion"));
   }

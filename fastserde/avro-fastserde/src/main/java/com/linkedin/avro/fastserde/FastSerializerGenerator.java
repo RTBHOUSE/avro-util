@@ -291,17 +291,17 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
     throw new RuntimeException("Unknown schema: " + schema + " in union schema: " + unionSchema);
   }
 
-  private void processUnion(final Schema unionSchema, JExpression unionExpr, JBlock body) {
+  private void processUnion(final Schema unionSchema, final JExpression unionExpr, final JBlock body) {
     JConditional ifBlock = null;
 
     for (Schema schemaOption : unionSchema.getTypes()) {
       if (Schema.Type.NULL.equals(schemaOption.getType())) {
-        /**
+        /*
          * We always handle the null branch of the union first, otherwise, it leads to a bug in the
          * case where there is an optional field where the null is the second branch of the union.
          */
         JExpression condition = unionExpr.eq(JExpr._null());
-        ifBlock = ifBlock != null ? ifBlock._elseif(condition) : body._if(condition);
+        ifBlock = body._if(condition);
         JBlock thenBlock = ifBlock._then();
         thenBlock.invoke(JExpr.direct(ENCODER), "writeIndex")
             .arg(JExpr.lit(getIndexNamedForUnion(unionSchema, schemaOption)));
@@ -312,7 +312,7 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
 
     for (Schema schemaOption : unionSchema.getTypes()) {
       if (Schema.Type.NULL.equals(schemaOption.getType())) {
-        /**
+        /*
          * Since we've already added code to process the null branch, we can skip it when processing
          * the other types.
          */
@@ -322,16 +322,15 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
       JClass optionClass = schemaAssistant.classFromSchema(schemaOption);
       JClass rawOptionClass = schemaAssistant.classFromSchema(schemaOption, true, true);
       JExpression condition;
-      /**
-       * In Avro-1.4, neither GenericEnumSymbol or GenericFixed has associated schema, so we don't expect to see
+      /*
+       * In Avro-1.4, neither GenericEnumSymbol nor GenericFixed has associated schema, so we don't expect to see
        * two or more Enum types or two or more Fixed types in the same Union in generic mode since the writer couldn't
-       * differentiate the Enum types or the Fixed types, but those scenarios are well supported in Avro-1.7 or above since
+       * differentiate the Enum types or the Fixed types, but those scenarios are well-supported in Avro-1.7 or above since
        * both of them have associated 'Schema', so the serializer could recognize the right type
        * by checking the associated 'Schema' in generic mode.
        */
       if (useGenericTypes && SchemaAssistant.isNamedTypeWithSchema(schemaOption)) {
         condition = unionExpr._instanceof(rawOptionClass).cand(JExpr.invoke(JExpr.lit(AvroCompatibilityHelper.getSchemaFullName(schemaOption)), "equals")
-            /* TODO: Replace by {@link AvroCompatibilityHelper#getSchemaFullName} */
             .arg(JExpr.invoke(JExpr.cast(optionClass, unionExpr), "getSchema").invoke("getFullName")));
       } else {
         if (unionExpr instanceof JVar && ((JVar)unionExpr).type().equals(rawOptionClass)) {
@@ -347,12 +346,14 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
         ifBlock = ifBlock != null ? ifBlock._elseif(condition) : body._if(condition);
         unionTypeProcessingBlock = ifBlock._then();
       }
+
       unionTypeProcessingBlock.invoke(JExpr.direct(ENCODER), "writeIndex")
           .arg(JExpr.lit(getIndexNamedForUnion(unionSchema, schemaOption)));
 
       if (schemaOption.getType().equals(Schema.Type.UNION) || schemaOption.getType().equals(Schema.Type.NULL)) {
         throw new FastSerdeGeneratorException("Incorrect union subschema processing: " + schemaOption);
       }
+
       if (SchemaAssistant.isComplexType(schemaOption)) {
         processComplexType(schemaOption, JExpr.cast(optionClass, unionExpr), unionTypeProcessingBlock);
       } else {
@@ -373,7 +374,7 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
     JExpression valueToWrite;
     if (useGenericTypes) {
       if (Utils.isAvro14()) {
-        /**
+        /*
          * In Avro-1.4, there is no way to infer/extract enum schema from {@link org.apache.avro.generic.GenericData.EnumSymbol},
          * so the serializer needs to record the schema id and the corresponding {@link org.apache.avro.Schema.EnumSchema},
          * and maintain a mapping between the schema id and EnumSchema JVar for future use.

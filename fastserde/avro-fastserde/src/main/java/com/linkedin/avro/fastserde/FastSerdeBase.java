@@ -1,6 +1,6 @@
 package com.linkedin.avro.fastserde;
 
-import com.linkedin.avroutil1.compatibility.AvroCompatibilityHelper;
+import com.linkedin.avroutil1.compatibility.AvroCompatibilityHelperCommon;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JConditional;
@@ -8,6 +8,7 @@ import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JVar;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -61,7 +62,7 @@ public abstract class FastSerdeBase<T extends GenericData> {
     this.classLoader = classLoader;
     this.compileClassPath = (null == compileClassPath ? "" : compileClassPath);
     this.modelData = modelData;
-    this.generatedPackageName = GENERATED_PACKAGE_NAME_PREFIX + description + "." + AvroCompatibilityHelper.getRuntimeAvroVersion().name();
+    this.generatedPackageName = GENERATED_PACKAGE_NAME_PREFIX + description + "." + AvroCompatibilityHelperCommon.getRuntimeAvroVersion().name();
     this.generatedSourcesPath = generateSourcePathFromPackageName(generatedPackageName);
   }
 
