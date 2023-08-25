@@ -14,6 +14,9 @@ public class FastGenericSerializerGeneratorTest_shouldWriteEnum_GenericSerialize
 
     private final Schema testEnumEnumSchema0 = Schema.parse("{\"type\":\"enum\",\"name\":\"testEnum\",\"namespace\":\"com.adpilot.utils.generated.avro\",\"symbols\":[\"A\",\"B\"]}");
 
+    public FastGenericSerializerGeneratorTest_shouldWriteEnum_GenericSerializer_1821537685() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {

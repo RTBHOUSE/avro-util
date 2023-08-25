@@ -12,6 +12,9 @@ public class FastGenericSerializerGeneratorTest_shouldWriteFixed_GenericSerializ
 {
 
 
+    public FastGenericSerializerGeneratorTest_shouldWriteFixed_GenericSerializer_69494836() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {
