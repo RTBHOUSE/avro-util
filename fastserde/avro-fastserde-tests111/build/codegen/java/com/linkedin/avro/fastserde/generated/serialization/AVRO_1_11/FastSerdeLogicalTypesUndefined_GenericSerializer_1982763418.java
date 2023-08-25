@@ -4,6 +4,7 @@ package com.linkedin.avro.fastserde.generated.serialization.AVRO_1_11;
 import java.io.IOException;
 import java.util.List;
 import com.linkedin.avro.fastserde.FastSerializer;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Encoder;
 
@@ -11,6 +12,11 @@ public class FastSerdeLogicalTypesUndefined_GenericSerializer_1982763418
     implements FastSerializer<IndexedRecord>
 {
 
+    private final GenericData modelData;
+
+    public FastSerdeLogicalTypesUndefined_GenericSerializer_1982763418(GenericData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
