@@ -8,15 +8,18 @@ import com.linkedin.avro.fastserde.FastDeserializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.io.Decoder;
+import org.apache.avro.specific.SpecificData;
 
 public class FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418
     implements FastDeserializer<com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined>
 {
 
     private final Schema readerSchema;
+    private final SpecificData modelData;
 
-    public FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418(Schema readerSchema) {
+    public FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418(Schema readerSchema, SpecificData modelData) {
         this.readerSchema = readerSchema;
+        this.modelData = modelData;
     }
 
     public com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined deserialize(com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined reuse, Decoder decoder)

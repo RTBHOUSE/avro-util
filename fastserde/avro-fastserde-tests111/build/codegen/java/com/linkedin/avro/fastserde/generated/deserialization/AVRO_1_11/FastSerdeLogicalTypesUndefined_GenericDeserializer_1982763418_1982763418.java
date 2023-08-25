@@ -6,6 +6,7 @@ import java.util.List;
 import com.linkedin.avro.fastserde.FastDeserializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Decoder;
 
@@ -14,11 +15,13 @@ public class FastSerdeLogicalTypesUndefined_GenericDeserializer_1982763418_19827
 {
 
     private final Schema readerSchema;
+    private final GenericData modelData;
     private final Schema arrayOfUnionOfDateAndTimestampMillis0;
     private final Schema arrayOfUnionOfDateAndTimestampMillisArrayElemSchema0;
 
-    public FastSerdeLogicalTypesUndefined_GenericDeserializer_1982763418_1982763418(Schema readerSchema) {
+    public FastSerdeLogicalTypesUndefined_GenericDeserializer_1982763418_1982763418(Schema readerSchema, GenericData modelData) {
         this.readerSchema = readerSchema;
+        this.modelData = modelData;
         this.arrayOfUnionOfDateAndTimestampMillis0 = readerSchema.getField("arrayOfUnionOfDateAndTimestampMillis").schema();
         this.arrayOfUnionOfDateAndTimestampMillisArrayElemSchema0 = arrayOfUnionOfDateAndTimestampMillis0 .getElementType();
     }
@@ -36,7 +39,7 @@ public class FastSerdeLogicalTypesUndefined_GenericDeserializer_1982763418_19827
         if ((((reuse)!= null)&&((reuse) instanceof IndexedRecord))&&(((IndexedRecord)(reuse)).getSchema() == readerSchema)) {
             FastSerdeLogicalTypesUndefined = ((IndexedRecord)(reuse));
         } else {
-            FastSerdeLogicalTypesUndefined = new org.apache.avro.generic.GenericData.Record(readerSchema);
+            FastSerdeLogicalTypesUndefined = new GenericData.Record(readerSchema);
         }
         FastSerdeLogicalTypesUndefined.put(0, (decoder.readInt()));
         populate_FastSerdeLogicalTypesUndefined0((FastSerdeLogicalTypesUndefined), (decoder));
@@ -54,7 +57,7 @@ public class FastSerdeLogicalTypesUndefined_GenericDeserializer_1982763418_19827
             arrayOfUnionOfDateAndTimestampMillis1 = ((List) oldArray0);
             arrayOfUnionOfDateAndTimestampMillis1 .clear();
         } else {
-            arrayOfUnionOfDateAndTimestampMillis1 = new org.apache.avro.generic.GenericData.Array<Object>(((int) chunkLen0), arrayOfUnionOfDateAndTimestampMillis0);
+            arrayOfUnionOfDateAndTimestampMillis1 = new GenericData.Array<Object>(((int) chunkLen0), arrayOfUnionOfDateAndTimestampMillis0);
         }
         while (chunkLen0 > 0) {
             for (int counter0 = 0; (counter0 <chunkLen0); counter0 ++) {
