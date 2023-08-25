@@ -12,6 +12,9 @@ public class FastGenericSerializerGeneratorTest_shouldWriteEnum_GenericSerialize
 {
 
 
+    public FastGenericSerializerGeneratorTest_shouldWriteEnum_GenericSerializer_1821537685() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {
