@@ -141,7 +141,7 @@ public class FastGenericSerializerGeneratorTest {
   @Test(groups = {"serializationTest"})
   public void shouldWriteEnum() {
     // given
-    Schema enumSchema = createEnumSchema("testEnum", new String[]{"A", "B"});
+    Schema enumSchema = createEnumSchema("TestEnum", new String[]{"A", "B"});
     Schema recordSchema = createRecord(
         createField("testEnum", enumSchema),
         createUnionFieldWithNull("testEnumUnion", enumSchema),

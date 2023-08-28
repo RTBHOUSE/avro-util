@@ -47,6 +47,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.data.TimeConversions;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.util.Utf8;
 
@@ -362,7 +363,7 @@ public class SchemaAssistant<T extends GenericData> {
         break;
       case ENUM:
         outputClass =
-            useGenericTypes ? codeModel.ref(GenericData.EnumSymbol.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
+            useGenericTypes ? codeModel.ref(GenericEnumSymbol.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
         break;
       case FIXED:
         outputClass = useGenericTypes ? codeModel.ref(GenericData.Fixed.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
