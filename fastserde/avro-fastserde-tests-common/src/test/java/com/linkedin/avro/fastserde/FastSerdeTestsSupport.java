@@ -134,11 +134,11 @@ public final class FastSerdeTestsSupport {
   }
 
   public static Schema createEnumSchema(String name, String[] ordinals) {
-    return Schema.createEnum(name, "", "com.adpilot.utils.generated.avro", Arrays.asList(ordinals));
+    return Schema.createEnum(name, "", "com.linkedin.avro.fastserde.generated.avro", Arrays.asList(ordinals));
   }
 
   public static Schema createEnumSchema(String name, String[] ordinals, String enumDefault) {
-    return AvroCompatibilityHelper.newEnumSchema(name, "", "com.adpilot.utils.generated.avro", Arrays.asList(ordinals),
+    return AvroCompatibilityHelper.newEnumSchema(name, "", "com.linkedin.avro.fastserde.generated.avro", Arrays.asList(ordinals),
         enumDefault);
   }
 
