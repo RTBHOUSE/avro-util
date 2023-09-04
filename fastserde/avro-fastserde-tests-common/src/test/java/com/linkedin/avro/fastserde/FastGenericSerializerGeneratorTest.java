@@ -72,8 +72,8 @@ public class FastGenericSerializerGeneratorTest {
     builder.put("testFlippedIntUnion", null);
     builder.put("testString", "aaa");
     builder.put("testStringUnion", "aaa");
-    builder.put("testLong", 1l);
-    builder.put("testLongUnion", 1l);
+    builder.put("testLong", 1L);
+    builder.put("testLongUnion", 1L);
     builder.put("testDouble", 1.0);
     builder.put("testDoubleUnion", 1.0);
     builder.put("testFloat", 1.0f);
@@ -89,11 +89,11 @@ public class FastGenericSerializerGeneratorTest {
     // then
     Assert.assertEquals(1, record.get("testInt"));
     Assert.assertEquals(1, record.get("testIntUnion"));
-    Assert.assertEquals(null, record.get("testFlippedIntUnion"));
+    Assert.assertNull(record.get("testFlippedIntUnion"));
     Assert.assertEquals("aaa", record.get("testString").toString());
     Assert.assertEquals("aaa", record.get("testStringUnion").toString());
-    Assert.assertEquals(1l, record.get("testLong"));
-    Assert.assertEquals(1l, record.get("testLongUnion"));
+    Assert.assertEquals(1L, record.get("testLong"));
+    Assert.assertEquals(1L, record.get("testLongUnion"));
     Assert.assertEquals(1.0, record.get("testDouble"));
     Assert.assertEquals(1.0, record.get("testDoubleUnion"));
     Assert.assertEquals(1.0f, record.get("testFloat"));
@@ -110,6 +110,7 @@ public class FastGenericSerializerGeneratorTest {
     return fixed;
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteFixed() {
     // given
@@ -138,8 +139,9 @@ public class FastGenericSerializerGeneratorTest {
         ((List<GenericData.Fixed>) record.get("testFixedUnionArray")).get(0).bytes());
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
-  public void shouldWriteEnum() {
+  public void shouldWriteGenericRecordWithEnums() {
     // given
     Schema enumSchema = createEnumSchema("testEnum", new String[]{"A", "B"});
     Schema recordSchema = createRecord(
@@ -218,6 +220,7 @@ public class FastGenericSerializerGeneratorTest {
     Assert.assertEquals(unionRecord.getSchema().getName(), "record2");
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteSubRecordCollectionsField() {
     // given
@@ -250,12 +253,13 @@ public class FastGenericSerializerGeneratorTest {
     Assert.assertEquals("abc",
         ((List<GenericData.Record>) record.get("recordsArrayUnion")).get(0).get("subField").toString());
     Assert.assertEquals("abc",
-        ((Map<String, GenericData.Record>) record.get("recordsMap")).get(new Utf8("1")).get("subField").toString());
-    Assert.assertEquals("abc", ((Map<String, GenericData.Record>) record.get("recordsMapUnion")).get(new Utf8("1"))
+        ((Map<CharSequence, GenericData.Record>) record.get("recordsMap")).get(new Utf8("1")).get("subField").toString());
+    Assert.assertEquals("abc", ((Map<CharSequence, GenericData.Record>) record.get("recordsMapUnion")).get(new Utf8("1"))
         .get("subField")
         .toString());
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteSubRecordComplexCollectionsField() {
     // given

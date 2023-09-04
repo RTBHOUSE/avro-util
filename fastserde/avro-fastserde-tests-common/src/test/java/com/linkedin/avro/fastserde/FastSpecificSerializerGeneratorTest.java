@@ -58,7 +58,7 @@ public class FastSpecificSerializerGeneratorTest {
     setField(record, "recordsMapArray", Collections.emptyMap());
 
     setField(record, "testInt", 1);
-    setField(record, "testLong", 1l);
+    setField(record, "testLong", 1L);
     setField(record, "testDouble", 1.0);
     setField(record, "testFloat", 1.0f);
     setField(record, "testBoolean", true);
@@ -84,8 +84,8 @@ public class FastSpecificSerializerGeneratorTest {
     setField(record, "testIntUnion", 1);
     setField(record, "testString", "aaa");
     setField(record, "testStringUnion", "aaa");
-    setField(record, "testLong", 1l);
-    setField(record, "testLongUnion", 1l);
+    setField(record, "testLong", 1L);
+    setField(record, "testLongUnion", 1L);
     setField(record, "testDouble", 1.0);
     setField(record, "testDoubleUnion", 1.0);
     setField(record, "testFloat", 1.0f);
@@ -103,18 +103,19 @@ public class FastSpecificSerializerGeneratorTest {
     Assert.assertEquals(1, ((Integer) getField(record, "testIntUnion")).intValue());
     Assert.assertEquals("aaa", getField(record, "testString").toString());
     Assert.assertEquals("aaa", getField(record, "testStringUnion").toString());
-    Assert.assertEquals(1l, getField(record, "testLong"));
-    Assert.assertEquals(1l, ((Long) getField(record, "testLongUnion")).longValue());
+    Assert.assertEquals(1L, getField(record, "testLong"));
+    Assert.assertEquals(1L, ((Long) getField(record, "testLongUnion")).longValue());
     Assert.assertEquals(1.0, getField(record, "testDouble"));
     Assert.assertEquals(1.0, getField(record, "testDoubleUnion"));
     Assert.assertEquals(1.0f, getField(record, "testFloat"));
     Assert.assertEquals(1.0f, getField(record, "testFloatUnion"));
-    Assert.assertEquals(true, getField(record, "testBoolean"));
-    Assert.assertEquals(true, ((Boolean) getField(record, "testBooleanUnion")).booleanValue());
+    Assert.assertTrue((Boolean) getField(record, "testBoolean"));
+    Assert.assertTrue((Boolean) getField(record, "testBooleanUnion"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytes"));
     Assert.assertEquals(ByteBuffer.wrap(new byte[]{0x01, 0x02}), getField(record, "testBytesUnion"));
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteFixed() {
     // given
@@ -144,6 +145,7 @@ public class FastSpecificSerializerGeneratorTest {
     Assert.assertEquals(new byte[]{0x04}, ((List<TestFixed>) getField(record, "testFixedUnionArray")).get(0).bytes());
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteEnum() {
     // given
@@ -182,6 +184,7 @@ public class FastSpecificSerializerGeneratorTest {
     Assert.assertEquals("abc", getField((SubRecord) getField(record, "subRecord"), "subField").toString());
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteSubRecordCollectionsField() {
 
@@ -209,6 +212,7 @@ public class FastSpecificSerializerGeneratorTest {
     Assert.assertEquals("abc", getField(((Map<CharSequence, SubRecord>) getField(record, "recordsMapUnion")).get(new Utf8("1")), "subField").toString());
   }
 
+  @SuppressWarnings("unchecked")
   @Test(groups = {"serializationTest"})
   public void shouldWriteSubRecordComplexCollectionsField() {
     // given
@@ -328,7 +332,7 @@ public class FastSpecificSerializerGeneratorTest {
     recordsMap.put("2", testRecord);
 
     // when
-    Map<String, TestRecord> map = decodeRecordFast(mapRecordSchema, dataAsDecoder(recordsMap, mapRecordSchema));
+    Map<CharSequence, TestRecord> map = decodeRecordFast(mapRecordSchema, dataAsDecoder(recordsMap, mapRecordSchema));
 
     // then
     Assert.assertEquals(2, map.size());
@@ -375,7 +379,6 @@ public class FastSpecificSerializerGeneratorTest {
     return DecoderFactory.defaultFactory().createBinaryDecoder(baos.toByteArray(), null);
   }
 
-  @SuppressWarnings("unchecked")
   private <T> T decodeRecordFast(Schema writerSchema, Decoder decoder) {
     SpecificDatumReader<T> datumReader = new SpecificDatumReader<>(writerSchema);
     try {
