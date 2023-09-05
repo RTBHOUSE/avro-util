@@ -43,9 +43,9 @@ public class UtilsTest {
   }
 
   @Test(dataProvider = "createValidJavaIdentifierTestCases")
-  void shouldGenerateValidJavaIdentifier(String varNameToPolish) {
+  void shouldGenerateValidJavaIdentifier(String javaIdentifierCandidate) {
     // when
-    String validJavaIdentifier = Utils.toValidJavaIdentifier(varNameToPolish);
+    String validJavaIdentifier = Utils.toValidJavaIdentifier(javaIdentifierCandidate);
 
     // when
     Assert.assertTrue(SourceVersion.isIdentifier(validJavaIdentifier));
@@ -68,7 +68,7 @@ public class UtilsTest {
             .toArray(Object[][]::new);
   }
 
-  @Test(dataProvider = "createInvalidJavaIdentifierTestCases", expectedExceptions = NullPointerException.class)
+  @Test(dataProvider = "createInvalidJavaIdentifierTestCases", expectedExceptions = IllegalArgumentException.class)
   void shouldFailGeneratingValidJavaIdentifier(String invalidProposal) {
     // NPE expected
     Utils.toValidJavaIdentifier(invalidProposal);
