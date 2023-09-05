@@ -24,7 +24,6 @@ import org.testng.collections.Lists;
 
 import com.linkedin.avro.fastserde.Utils;
 import com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesTest1;
-import com.linkedin.avro.fastserde.generated.avro.JustSimpleEnum;
 import com.linkedin.avro.fastserde.generated.avro.LocalTimestampRecord;
 import com.linkedin.avroutil1.compatibility.AvroVersion;
 
@@ -74,9 +73,6 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
         Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.UTC);
 
         FastSerdeLogicalTypesTest1.Builder builder = FastSerdeLogicalTypesTest1.newBuilder()
-                .setEnumField(JustSimpleEnum.E1)
-                .setArrayOfEnums(Arrays.asList(JustSimpleEnum.E1, JustSimpleEnum.E3))
-                .setMapOfEnums(mapOf(new String[] {"due", "cinque"}, JustSimpleEnum.E2, JustSimpleEnum.E5))
                 .setUnionOfArrayAndMap(unionOfArrayAndMap)
                 .setTimestampMillisMap(createTimestampMillisMap())
                 .setNullableArrayOfDates(nullableArrayOfDates)

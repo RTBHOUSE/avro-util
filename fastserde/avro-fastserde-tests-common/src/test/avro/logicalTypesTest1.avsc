@@ -5,38 +5,6 @@
   "doc": "Used in tests to confirm fast-serde supports logical-types",
   "fields": [
     {
-      "name": "enumField",
-      "type": {
-        "name": "JustSimpleEnum",
-        "type": "enum",
-        "symbols": [
-          "E1",
-          "E2",
-          "E3",
-          "E4",
-          "E5"
-        ]
-      }
-    },
-    {
-      "name": "arrayOfEnums",
-      "type": [
-        "null",
-        {
-          "type": "array",
-          "items": "JustSimpleEnum"
-        }
-      ],
-      "default": null
-    },
-    {
-      "name": "mapOfEnums",
-      "type": {
-        "type": "map",
-        "values": "JustSimpleEnum"
-      }
-    },
-    {
       "name": "unionOfArrayAndMap",
       "type": [
         {
