@@ -5,6 +5,8 @@ import com.linkedin.avro.fastserde.coldstart.ColdPrimitiveDoubleList;
 import com.linkedin.avro.fastserde.coldstart.ColdPrimitiveFloatList;
 import com.linkedin.avro.fastserde.coldstart.ColdPrimitiveIntList;
 import com.linkedin.avro.fastserde.coldstart.ColdPrimitiveLongList;
+import com.linkedin.avro.fastserde.generated.avro.FastSerdeEnums;
+import com.linkedin.avro.fastserde.generated.avro.JustSimpleEnum;
 import com.linkedin.avroutil1.compatibility.AvroCompatibilityHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,7 +30,9 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.util.Utf8;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+import org.testng.collections.Lists;
 
 import static com.linkedin.avro.fastserde.FastSerdeTestsSupport.*;
 
@@ -168,6 +172,39 @@ public class FastGenericSerializerGeneratorTest {
     Assert.assertEquals("A", record.get("testEnumUnion").toString());
     Assert.assertEquals("A", ((List<GenericData.EnumSymbol>) record.get("testEnumArray")).get(0).toString());
     Assert.assertEquals("A", ((List<GenericData.EnumSymbol>) record.get("testEnumUnionArray")).get(0).toString());
+  }
+
+  @Ignore("java.lang.ClassCastException: class com.linkedin.avro.fastserde.generated.avro.JustSimpleEnum cannot be cast to class org.apache.avro.generic.GenericData$EnumSymbol")
+  @Test(groups = {"serializationTest"})
+  public void shouldWriteSpecificRecordWithEnums() {
+    // given
+    Map<CharSequence, JustSimpleEnum> mapOfEnums = new HashMap<>();
+    mapOfEnums.put("due", JustSimpleEnum.E2);
+    mapOfEnums.put("cinque", JustSimpleEnum.E5);
+
+    FastSerdeEnums fastSerdeEnums = new FastSerdeEnums();
+    setField(fastSerdeEnums, "enumField", JustSimpleEnum.E1);
+    setField(fastSerdeEnums, "arrayOfEnums", Lists.newArrayList(JustSimpleEnum.E1, JustSimpleEnum.E3, JustSimpleEnum.E4));
+    setField(fastSerdeEnums, "mapOfEnums", mapOfEnums);
+
+    // when
+    GenericRecord record = decodeRecord(fastSerdeEnums.getSchema(), dataAsBinaryDecoder(fastSerdeEnums));
+
+    // then
+    Assert.assertTrue(record.get("enumField") instanceof GenericData.EnumSymbol);
+    Assert.assertEquals(record.get("enumField").toString(), "E1");
+
+    GenericData.Array<?> arrayOfEnums = (GenericData.Array<?>) record.get("arrayOfEnums");
+    Assert.assertEquals(arrayOfEnums.size(), 3);
+    Assert.assertEquals(arrayOfEnums.get(0).toString(), JustSimpleEnum.E1.name());
+    Assert.assertEquals(arrayOfEnums.get(1).toString(), JustSimpleEnum.E3.name());
+    Assert.assertEquals(arrayOfEnums.get(2).toString(), JustSimpleEnum.E4.name());
+
+    @SuppressWarnings("unchecked")
+    Map<CharSequence, GenericData.EnumSymbol> deserializedMapOfEnums = (Map<CharSequence, GenericData.EnumSymbol>) record.get("mapOfEnums");
+    Assert.assertEquals(deserializedMapOfEnums.size(), 2);
+    Assert.assertEquals(deserializedMapOfEnums.get(new Utf8("due")).toString(), JustSimpleEnum.E2.toString());
+    Assert.assertEquals(deserializedMapOfEnums.get(new Utf8("cinque")).toString(), JustSimpleEnum.E5.toString());
   }
 
   @Test(groups = {"serializationTest"})
