@@ -363,7 +363,7 @@ public class SchemaAssistant<T extends GenericData> {
         break;
       case ENUM:
         outputClass =
-            useGenericTypes ? codeModel.ref(GenericEnumSymbol.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
+            useGenericTypes ? codeModel.ref(GenericData.EnumSymbol.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
         break;
       case FIXED:
         outputClass = useGenericTypes ? codeModel.ref(GenericData.Fixed.class) : codeModel.ref(AvroCompatibilityHelper.getSchemaFullName(schema));
