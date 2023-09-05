@@ -247,7 +247,7 @@ public class Utils {
 
   public static String toValidJavaIdentifier(String javaIdentifier) {
     if (StringUtils.isBlank(javaIdentifier)) {
-      throw new NullPointerException("Expected not-blank identifier!");
+      throw new IllegalArgumentException("Expected not-blank identifier!");
     }
 
     javaIdentifier = StringUtils.deleteWhitespace(javaIdentifier)

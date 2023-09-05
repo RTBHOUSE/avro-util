@@ -95,7 +95,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
       constructor = generatedClass.constructor(JMod.PUBLIC);
       JVar constructorParam = constructor.param(Schema.class, "readerSchema");
       constructor.body().assign(JExpr.refthis(readerSchemaVar.name()), constructorParam);
-      injectConversionClasses(this.constructor);
+      injectConversionClasses(constructor);
 
       Schema aliasedWriterSchema = writer;
       /*

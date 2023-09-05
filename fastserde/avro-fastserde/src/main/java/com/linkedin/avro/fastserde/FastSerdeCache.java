@@ -342,10 +342,18 @@ public final class FastSerdeCache {
   }
 
   /**
+   * @see #getFastSpecificDeserializerAsync(Schema, Schema, SpecificData)
+   */
+  public CompletableFuture<FastDeserializer<?>> getFastSpecificDeserializerAsync(Schema writerSchema, Schema readerSchema) {
+    return getFastSpecificDeserializerAsync(writerSchema, readerSchema, null);
+  }
+
+  /**
    * Asynchronously generates if needed and returns specific-class aware avro {@link FastDeserializer}.
    *
    * @param writerSchema {@link Schema} of written data
    * @param readerSchema {@link Schema} intended to be used during deserialization
+   * @param modelData Passes additional information e.g. conversion classes not available in the schema
    * @return {@link CompletableFuture} which contains specific-class aware avro {@link FastDeserializer}
    */
   public CompletableFuture<FastDeserializer<?>> getFastSpecificDeserializerAsync(Schema writerSchema, Schema readerSchema, SpecificData modelData) {
@@ -354,10 +362,18 @@ public final class FastSerdeCache {
   }
 
   /**
+   * @see #getFastGenericDeserializerAsync(Schema, Schema, GenericData)
+   */
+  public CompletableFuture<FastDeserializer<?>> getFastGenericDeserializerAsync(Schema writerSchema, Schema readerSchema) {
+    return getFastGenericDeserializerAsync(writerSchema, readerSchema);
+  }
+
+  /**
    * Asynchronously generates if needed and returns generic-class aware avro {@link FastDeserializer}.
    *
    * @param writerSchema {@link Schema} of written data
    * @param readerSchema {@link Schema} intended to be used during deserialization
+   * @param modelData Passes additional information e.g. conversion classes not available in the schema
    * @return {@link CompletableFuture} which contains generic-class aware avro {@link FastDeserializer}
    */
   public CompletableFuture<FastDeserializer<?>> getFastGenericDeserializerAsync(Schema writerSchema, Schema readerSchema, GenericData modelData) {
@@ -383,11 +399,19 @@ public final class FastSerdeCache {
   }
 
   /**
+   * @see #buildFastSpecificDeserializer(Schema, Schema, SpecificData)
+   */
+  public FastDeserializer<?> buildFastSpecificDeserializer(Schema writerSchema, Schema readerSchema) {
+    return buildFastSpecificDeserializer(writerSchema, readerSchema, null);
+  }
+
+  /**
    * This function will generate a fast specific deserializer, and it will throw exception if anything wrong happens.
    * This function can be used to verify whether current {@link FastSerdeCache} could generate proper fast deserializer.
    *
    * @param writerSchema writer schema
    * @param readerSchema reader schema
+   * @param modelData Passes additional information e.g. conversion classes not available in the schema
    * @return a fast deserializer
    */
   public FastDeserializer<?> buildFastSpecificDeserializer(Schema writerSchema, Schema readerSchema, SpecificData modelData) {
@@ -437,6 +461,13 @@ public final class FastSerdeCache {
         return datumReader.read(reuse, d);
       }
     };
+  }
+
+  /**
+   * @see #buildFastGenericDeserializer(Schema, Schema, GenericData)
+   */
+  public FastDeserializer<?> buildFastGenericDeserializer(Schema writerSchema, Schema readerSchema) {
+    return buildFastGenericDeserializer(writerSchema, readerSchema, null);
   }
 
   /**
@@ -498,6 +529,10 @@ public final class FastSerdeCache {
     };
   }
 
+  public FastSerializer<?> buildFastSpecificSerializer(Schema schema) {
+    return buildFastSpecificSerializer(schema, null);
+  }
+
   public FastSerializer<?> buildFastSpecificSerializer(Schema schema, SpecificData modelData) {
     // Defensive code
     if (!Utils.isSupportedAvroVersionsForSerializer()) {
@@ -541,6 +576,10 @@ public final class FastSerdeCache {
         datumWriter.write(data, e);
       }
     };
+  }
+
+  public FastSerializer<?> buildFastGenericSerializer(Schema schema) {
+    return buildFastGenericSerializer(schema, null);
   }
 
   public FastSerializer<?> buildFastGenericSerializer(Schema schema, GenericData modelData) {
@@ -630,6 +669,10 @@ public final class FastSerdeCache {
 
   public static class FastSerializerWithAvroSpecificImpl<V> implements FastSerializer<V> {
     private final DatumWriter<V> datumWriter;
+
+    public FastSerializerWithAvroSpecificImpl(Schema schema) {
+      this(schema, null);
+    }
 
     public FastSerializerWithAvroSpecificImpl(Schema schema, SpecificData modelData) {
       this.datumWriter = AvroCompatibilityHelper.newSpecificDatumWriter(schema,
