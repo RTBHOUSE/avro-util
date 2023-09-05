@@ -30,7 +30,6 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.util.Utf8;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
@@ -174,7 +173,6 @@ public class FastGenericSerializerGeneratorTest {
     Assert.assertEquals("A", ((List<GenericData.EnumSymbol>) record.get("testEnumUnionArray")).get(0).toString());
   }
 
-  @Ignore("java.lang.ClassCastException: class com.linkedin.avro.fastserde.generated.avro.JustSimpleEnum cannot be cast to class org.apache.avro.generic.GenericData$EnumSymbol")
   @Test(groups = {"serializationTest"})
   public void shouldWriteSpecificRecordWithEnums() {
     // given
