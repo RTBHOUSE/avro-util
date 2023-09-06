@@ -24,6 +24,13 @@
       ]
     },
     {
+      "name": "customIntervalField",
+      "type": {
+        "type": "string",
+        "logicalType": "custom-interval"
+      }
+    },
+    {
       "name": "timestampMillisMap",
       "type": {
         "type": "map",

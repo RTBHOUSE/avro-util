@@ -17,7 +17,7 @@ import org.apache.avro.Schema;
 
 public class AvroSchemaUtils {
   public static Set<AvroSchema> schemasToAvroSchemas(Set<Schema> schemas) {
-    HashSet<AvroSchema> avroSchemas = new HashSet();
+    HashSet<AvroSchema> avroSchemas = new HashSet<>();
     AvscParser avscParser = new AvscParser();
     for (Schema schema : schemas) {
       String avscText = AvroCompatibilityHelper.toAvsc(schema, AvscGenerationConfig.CORRECT_MITIGATED_PRETTY);

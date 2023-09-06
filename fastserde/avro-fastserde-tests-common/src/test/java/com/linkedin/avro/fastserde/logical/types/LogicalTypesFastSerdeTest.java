@@ -73,6 +73,7 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
         Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.UTC);
 
         FastSerdeLogicalTypesTest1.Builder builder = FastSerdeLogicalTypesTest1.newBuilder()
+                .setCustomIntervalField("1,2,3")
                 .setUnionOfArrayAndMap(unionOfArrayAndMap)
                 .setTimestampMillisMap(createTimestampMillisMap())
                 .setNullableArrayOfDates(nullableArrayOfDates)

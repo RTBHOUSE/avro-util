@@ -1,0 +1,21 @@
+/*
+ * Copyright 2021 LinkedIn Corp.
+ * Licensed under the BSD 2-Clause License (the "License").
+ * See License in the project root for license information.
+ */
+
+plugins {
+  id "java-library"
+  id "checkstyle"
+}
+
+dependencies {
+  implementation project(":helper:helper")
+
+  implementation "org.slf4j:slf4j-api:1.7.14"
+  implementation "org.apache.commons:commons-lang3:3.4"
+
+  compileOnlyApi ("org.apache.avro:avro:1.10.2") {
+     exclude group: "org.slf4j"
+  }
+}

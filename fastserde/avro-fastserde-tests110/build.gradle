@@ -49,6 +49,10 @@ dependencies {
     exclude group: "org.apache.avro"
   }
 
+  testImplementation (project(":fastserde:avro-fastserde-test-logical-types")) {
+    exclude group: "org.apache.avro"
+  }
+
   testImplementation 'org.testng:testng:6.14.3'
   testImplementation 'org.slf4j:slf4j-simple:1.7.14'
 
@@ -63,6 +67,7 @@ dependencies {
   }
 
   codegen project(":helper:helper")
+  codegen project(":fastserde:avro-fastserde-test-logical-types")
   codegen "org.apache.avro:avro-tools:1.10.2"
   codegen "org.apache.avro:avro-compiler:1.10.2"
 }
@@ -91,7 +96,7 @@ task runVanillaAvroCodegen {
     doLast {
       javaexec {
         classpath = configurations.codegen
-        main = 'org.apache.avro.tool.Main'
+        main = 'com.linkedin.avro.fastserde.logical.types.CompileSchemaMainInterceptor'
         args = ["compile", "schema", file.getAbsolutePath(), "$buildDir/generated/avro"]
       }
     }
