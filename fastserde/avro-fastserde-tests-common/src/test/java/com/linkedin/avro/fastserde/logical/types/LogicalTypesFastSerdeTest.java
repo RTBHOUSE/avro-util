@@ -10,8 +10,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,28 +32,39 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
         LocalDate now = LocalDate.now();
         LocalDate localDate = LocalDate.of(2023, 8, 11);
 
-        Map<String, LocalDate> mapOfDates = new HashMap<>();
-        mapOfDates.put("today", now);
-        mapOfDates.put("yesterday", now.minusDays(1));
-        mapOfDates.put("tomorrow", now.plusDays(1));
+        Map<CharSequence, LocalDate> mapOfDates = mapOf(
+                new String[]{"today", "yesterday", "tomorrow"},
+                new LocalDate[]{now, now.minusDays(1), now.plusDays(1)});
 
+        Map<CharSequence, Instant> mapOfTimestamps = mapOf(
+                new String[]{"today", "yesterday", "tomorrow"},
+                new Instant[]{toInstant(now), toInstant(now.minusDays(1)), toInstant(now.plusDays(1))});
+
+        Map<CharSequence, Object> mapOfDatesAndTimestamps = mapOf(
+                new String[]{"today", "yesterday", "tomorrow"},
+                new Object[]{toInstant(now), now.minusDays(1), now.plusDays(1)});
+
+        Object[] mapOfUnionsOfDateAndTimestampMillisOptions = {mapOfDates, mapOfTimestamps, mapOfDatesAndTimestamps};
+        Object[] nullableUnionOfDateAndLocalTimestampOptions = {null, now.minusDays(12), localDate.atStartOfDay()};
+        Object[] unionOfDateAndLocalTimestampOptions = {now.minusDays(12), localDate.atStartOfDay()};
         Object[] unionOfArrayAndMapOptions = {
                 Lists.newArrayList(LocalTime.now(), LocalTime.now().plusMinutes(1)), mapOfDates};
         Object[] nullableArrayOfDatesOptions = {
                 null, Lists.newArrayList(localDate, localDate.plusDays(11), localDate.plusDays(22))};
         Object[] decimalOrDateOptions = {new BigDecimal("3.14"), LocalDate.of(2023, 3, 14)};
-        Object[] nullableUnionOfDateAndLocalTimestampOptions = {null, now.minusDays(12), localDate.atStartOfDay()};
-        Object[] unionOfDateAndLocalTimestampOptions = {now.minusDays(12), localDate.atStartOfDay()};
 
         List<Object[]> allOptions = new ArrayList<>();
 
-        for (Object unionOfArrayAndMap : unionOfArrayAndMapOptions) {
-            for (Object nullableArrayOfDates : nullableArrayOfDatesOptions) {
-                for (Object decimalOrDate : decimalOrDateOptions) {
-                    for (Object nullableUnionOfDateAndLocalTimestamp: nullableUnionOfDateAndLocalTimestampOptions) {
-                        for (Object unionOfDateAndLocalTimestamp : unionOfDateAndLocalTimestampOptions) {
-                            allOptions.add(new Object[]{unionOfArrayAndMap, nullableArrayOfDates, decimalOrDate,
-                                    nullableUnionOfDateAndLocalTimestamp, unionOfDateAndLocalTimestamp});
+        for (Object mapOfUnionsOfDateAndTimestampMillis : mapOfUnionsOfDateAndTimestampMillisOptions) {
+            for (Object nullableUnionOfDateAndLocalTimestamp : nullableUnionOfDateAndLocalTimestampOptions) {
+                for (Object unionOfDateAndLocalTimestamp : unionOfDateAndLocalTimestampOptions) {
+                    for (Object unionOfArrayAndMap : unionOfArrayAndMapOptions) {
+                        for (Object nullableArrayOfDates : nullableArrayOfDatesOptions) {
+                            for (Object decimalOrDate : decimalOrDateOptions) {
+                                allOptions.add(new Object[]{mapOfUnionsOfDateAndTimestampMillis,
+                                        nullableUnionOfDateAndLocalTimestamp, unionOfDateAndLocalTimestamp,
+                                        unionOfArrayAndMap, nullableArrayOfDates, decimalOrDate});
+                            }
                         }
                     }
                 }
@@ -66,13 +75,16 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
     }
 
     @Test(groups = "serializationTest", dataProvider = "logicalTypesTestCases")
-    public void shouldWriteAndReadLogicalTypesSuccessfully(Object unionOfArrayAndMap, List<LocalDate> nullableArrayOfDates,
-            Object decimalOrDate, Object nullableUnionOfDateAndLocalTimestamp, Object unionOfDateAndLocalTimestamp) throws IOException {
+    public void shouldWriteAndReadLogicalTypesSuccessfully(Map<CharSequence, Object> mapOfUnionsOfDateAndTimestampMillis,
+            Object nullableUnionOfDateAndLocalTimestamp, Object unionOfDateAndLocalTimestamp,
+            Object unionOfArrayAndMap, List<LocalDate> nullableArrayOfDates, Object decimalOrDate) throws IOException {
         // given
         LocalDate localDate = LocalDate.of(2023, 8, 11);
         Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.UTC);
+        LocalTimestampRecord localTimestampRecord = createLocalTimestampRecord(nullableUnionOfDateAndLocalTimestamp, unionOfDateAndLocalTimestamp);
 
         FastSerdeLogicalTypesTest1.Builder builder = FastSerdeLogicalTypesTest1.newBuilder()
+                .setMapOfUnionsOfDateAndTimestampMillis(mapOfUnionsOfDateAndTimestampMillis)
                 .setUnionOfArrayAndMap(unionOfArrayAndMap)
                 .setTimestampMillisMap(createTimestampMillisMap())
                 .setNullableArrayOfDates(nullableArrayOfDates)
@@ -83,7 +95,7 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
                 .setTimeMillisField(LocalTime.of(14, 17, 45, 12345))
                 .setTimeMicrosField(LocalTime.of(14, 17, 45, 12345))
                 .setDateField(localDate)
-                .setNestedLocalTimestampMillis(createLocalTimestampRecord(nullableUnionOfDateAndLocalTimestamp, unionOfDateAndLocalTimestamp));
+                .setNestedLocalTimestampMillis(localTimestampRecord);
         injectUuidField(builder);
         FastSerdeLogicalTypesTest1 inputData = builder.build();
 
@@ -95,10 +107,10 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
     }
 
     private Map<CharSequence, Instant> createTimestampMillisMap() {
-        return mapOf(new String[] {"one", "two", "three"},
+        return mapOf(new String[]{"one", "two", "three"}, new Instant[]{
                 toInstant(LocalDate.of(2023, 8, 18)),
                 toInstant(LocalDate.of(2023, 8, 19)),
-                toInstant(LocalDate.of(2023, 8, 20)));
+                toInstant(LocalDate.of(2023, 8, 20))});
     }
 
     private LocalTimestampRecord createLocalTimestampRecord(
@@ -133,7 +145,7 @@ public class LogicalTypesFastSerdeTest extends LogicalTypesTestBase {
         return builder.build();
     }
 
-    private <V> Map<CharSequence, V> mapOf(String[] keys, V... values) {
+    private static <V> Map<CharSequence, V> mapOf(String[] keys, V[] values) {
         Map<CharSequence, V> map = new LinkedHashMap<>();
         for (int i = 0; i < keys.length; i++) {
             map.put(keys[i], values[i]);

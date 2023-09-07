@@ -105,7 +105,7 @@ public abstract class LogicalTypesTestBase {
         return encoder.toByteArray();
     }
 
-    protected Instant toInstant(Object maybeDate) {
+    protected static Instant toInstant(Object maybeDate) {
         if (maybeDate == null) {
             return null;
         } else if (maybeDate instanceof LocalDate) {
