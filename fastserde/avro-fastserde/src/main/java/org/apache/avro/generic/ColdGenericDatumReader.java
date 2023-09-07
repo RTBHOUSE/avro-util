@@ -13,11 +13,11 @@ import com.linkedin.avro.fastserde.Utils;
  */
 public class ColdGenericDatumReader<T> extends GenericDatumReader<T> implements ColdDatumReaderMixIn {
 
-  private ColdGenericDatumReader(Schema writerSchema, Schema readerSchema, GenericData modelData) {
+  public ColdGenericDatumReader(Schema writerSchema, Schema readerSchema, GenericData modelData) {
     super(writerSchema, readerSchema, modelData != null ? modelData : GenericData.get());
   }
 
-  private ColdGenericDatumReader(Schema writerSchema, Schema readerSchema) {
+  public ColdGenericDatumReader(Schema writerSchema, Schema readerSchema) {
     super(writerSchema, readerSchema);
   }
 

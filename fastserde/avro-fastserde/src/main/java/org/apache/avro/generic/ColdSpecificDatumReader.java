@@ -15,11 +15,11 @@ import com.linkedin.avro.fastserde.Utils;
  */
 public class ColdSpecificDatumReader<T> extends SpecificDatumReader<T> implements ColdDatumReaderMixIn {
 
-  private ColdSpecificDatumReader(Schema writerSchema, Schema readerSchema, SpecificData modelData) {
+  public ColdSpecificDatumReader(Schema writerSchema, Schema readerSchema, SpecificData modelData) {
     super(writerSchema, readerSchema, modelData != null ? modelData : SpecificData.get());
   }
 
-  private ColdSpecificDatumReader(Schema writerSchema, Schema readerSchema) {
+  public ColdSpecificDatumReader(Schema writerSchema, Schema readerSchema) {
     super(writerSchema, readerSchema);
   }
 
