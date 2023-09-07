@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Generic {@link DatumReader} backed by generated deserialization code.
  */
-public class FastGenericDatumReader<T, U extends GenericData> implements DatumReader<T> {
+public class FastGenericDatumReader<T> implements DatumReader<T> {
   private static final Logger LOGGER = LoggerFactory.getLogger(FastGenericDatumReader.class);
 
   private Schema writerSchema;
   private Schema readerSchema;
   private final FastSerdeCache cache;
-  private final U modelData;
+  private final GenericData modelData;
 
   private final AtomicReference<FastDeserializer<T>> cachedFastDeserializer = new AtomicReference<>();
 
@@ -40,7 +40,7 @@ public class FastGenericDatumReader<T, U extends GenericData> implements DatumRe
     this(writerSchema, readerSchema, cache, null);
   }
 
-  public FastGenericDatumReader(Schema writerSchema, Schema readerSchema, FastSerdeCache cache, U modelData) {
+  public FastGenericDatumReader(Schema writerSchema, Schema readerSchema, FastSerdeCache cache, GenericData modelData) {
     this.writerSchema = writerSchema;
     this.readerSchema = readerSchema;
     this.cache = cache != null ? cache : FastSerdeCache.getDefaultInstance();
@@ -106,18 +106,18 @@ public class FastGenericDatumReader<T, U extends GenericData> implements DatumRe
   }
 
   protected CompletableFuture<FastDeserializer<T>> getFastDeserializer(FastSerdeCache fastSerdeCache,
-      Schema writerSchema, Schema readerSchema, U modelData) {
+      Schema writerSchema, Schema readerSchema, GenericData modelData) {
     return fastSerdeCache.getFastGenericDeserializerAsync(writerSchema, readerSchema, modelData)
         .thenApply(d -> (FastDeserializer<T>) d);
   }
 
   @SuppressWarnings("unchecked")
   protected FastDeserializer<T> getFastDeserializerFromCache(FastSerdeCache fastSerdeCache, Schema writerSchema,
-      Schema readerSchema, U modelData) {
+      Schema readerSchema, GenericData modelData) {
     return (FastDeserializer<T>) fastSerdeCache.getFastGenericDeserializer(writerSchema, readerSchema, modelData);
   }
 
-  protected FastDeserializer<T> getRegularAvroImpl(Schema writerSchema, Schema readerSchema, U modelData) {
+  protected FastDeserializer<T> getRegularAvroImpl(Schema writerSchema, Schema readerSchema, GenericData modelData) {
     return new FastSerdeCache.FastDeserializerWithAvroGenericImpl<>(writerSchema, readerSchema, modelData);
   }
 

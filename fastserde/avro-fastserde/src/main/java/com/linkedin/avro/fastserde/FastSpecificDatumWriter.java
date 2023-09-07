@@ -1,13 +1,14 @@
 package com.linkedin.avro.fastserde;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.specific.SpecificData;
 
 
 /**
  * {@link org.apache.avro.specific.SpecificDatumWriter} backed by generated serialization code.
  */
-public class FastSpecificDatumWriter<T> extends FastGenericDatumWriter<T, SpecificData> {
+public class FastSpecificDatumWriter<T> extends FastGenericDatumWriter<T> {
 
   public FastSpecificDatumWriter(Schema schema) {
     super(schema);
@@ -27,12 +28,12 @@ public class FastSpecificDatumWriter<T> extends FastGenericDatumWriter<T, Specif
 
   @SuppressWarnings("unchecked")
   @Override
-  protected FastSerializer<T> getFastSerializerFromCache(FastSerdeCache fastSerdeCache, Schema schema, SpecificData modelData) {
-    return (FastSerializer<T>) fastSerdeCache.getFastSpecificSerializer(schema, modelData);
+  protected FastSerializer<T> getFastSerializerFromCache(FastSerdeCache fastSerdeCache, Schema schema, GenericData specificData) {
+    return (FastSerializer<T>) fastSerdeCache.getFastSpecificSerializer(schema, (SpecificData) specificData);
   }
 
   @Override
-  protected FastSerializer<T> getRegularAvroImpl(Schema schema, SpecificData modelData) {
-    return new FastSerdeCache.FastSerializerWithAvroSpecificImpl<>(schema, modelData);
+  protected FastSerializer<T> getRegularAvroImpl(Schema schema, GenericData specificData) {
+    return new FastSerdeCache.FastSerializerWithAvroSpecificImpl<>(schema, (SpecificData) specificData);
   }
 }

@@ -52,7 +52,7 @@ public class FastDatumWriterTest {
   @SuppressWarnings("unchecked")
   public void shouldCreateGenericDatumWriter() throws IOException {
     Schema recordSchema = createRecord("TestSchema", createPrimitiveUnionFieldSchema("test", Schema.Type.STRING));
-    FastGenericDatumWriter<GenericRecord, GenericData> fastGenericDatumWriter = new FastGenericDatumWriter<>(recordSchema, cache);
+    FastGenericDatumWriter<GenericRecord> fastGenericDatumWriter = new FastGenericDatumWriter<>(recordSchema, cache);
 
     Assert.assertFalse(fastGenericDatumWriter.isFastSerializerUsed(), "FastGenericDatumWriter"
         + " shouldn't use the fast serializer when firstly created");
@@ -75,7 +75,7 @@ public class FastDatumWriterTest {
     Assert.assertNotEquals(2, fastGenericSerializer.getClass().getDeclaredMethods().length);
 
     // Block fast class generation
-    cache.buildFastGenericSerializer(recordSchema, null);
+    cache.buildFastGenericSerializer(recordSchema);
     fastGenericDatumWriter.write(record, AvroCompatibilityHelper.newBinaryEncoder(new ByteArrayOutputStream(), true, null));
     Assert.assertTrue(fastGenericDatumWriter.isFastSerializerUsed(), "FastGenericDatumWriter should be using"
         + " Fast Serializer when the fast deserializer generation is done.");

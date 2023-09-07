@@ -88,7 +88,7 @@ public class FastDatumReaderTest {
   public void shouldGetFastGenericDeserializerAndUpdateCachedFastDeserializer() throws Exception {
     // given
     Schema recordSchema = createRecord("TestSchema", createPrimitiveUnionFieldSchema("test", Schema.Type.STRING));
-    FastGenericDatumReader<GenericRecord, GenericData> fastGenericDatumReader = new FastGenericDatumReader<>(recordSchema, cache);
+    FastGenericDatumReader<GenericRecord> fastGenericDatumReader = new FastGenericDatumReader<>(recordSchema, cache);
 
     // when
     FastDeserializer<GenericRecord> fastGenericDeserializer =
@@ -104,7 +104,7 @@ public class FastDatumReaderTest {
   @SuppressWarnings("unchecked")
   public void shouldCreateGenericDatumReader() throws IOException {
     Schema recordSchema = createRecord("TestSchema", createPrimitiveUnionFieldSchema("test", Schema.Type.STRING));
-    FastGenericDatumReader<GenericRecord, GenericData> fastGenericDatumReader = new FastGenericDatumReader<>(recordSchema, cache);
+    FastGenericDatumReader<GenericRecord> fastGenericDatumReader = new FastGenericDatumReader<>(recordSchema, cache);
 
     Assert.assertFalse(fastGenericDatumReader.isFastDeserializerUsed(), "FastGenericDatumReader"
         + " shouldn't use the fast deserializer when firstly created");
@@ -127,7 +127,7 @@ public class FastDatumReaderTest {
         fastGenericDatumReader.read(null, FastSerdeTestsSupport.genericDataAsDecoder(record)).get("test"));
 
     // Block fast class generation
-    cache.buildFastGenericDeserializer(recordSchema, recordSchema, null);
+    cache.buildFastGenericDeserializer(recordSchema, recordSchema);
     // Run the de-serialization again
     Assert.assertEquals(new Utf8("test"),
         fastGenericDatumReader.read(null, FastSerdeTestsSupport.genericDataAsDecoder(record)).get("test"));

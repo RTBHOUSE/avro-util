@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificDatumReader;
@@ -110,7 +109,7 @@ public class SerDeMicroBenchmark {
     byte[] serializedBytes = serializedTestObjects(1000);
     long startInMs = System.currentTimeMillis();
 //    FastSpecificDatumReader<BenchmarkTestObject> fastSpecificDatumReader = new FastSpecificDatumReader<>(BenchmarkTestObject.SCHEMA$);
-    FastGenericDatumReader<GenericRecord, GenericData> fastGenericDatumReader =
+    FastGenericDatumReader<GenericRecord> fastGenericDatumReader =
         new FastGenericDatumReader<>(BenchmarkTestObject.SCHEMA$);
     AvroGenericDeserializer<GenericRecord> fastDeserializer = new AvroGenericDeserializer<>(fastGenericDatumReader);
     for (int i = 0; i <= 10000; ++i) {
@@ -132,7 +131,7 @@ public class SerDeMicroBenchmark {
     byte[] serializedBytes = serializedTestObjects(1000);
     AvroGenericDeserializer<BenchmarkTestObject> deserializer;
     if (useFastAvro) {
-      FastGenericDatumReader<BenchmarkTestObject, GenericData> fastGenericDatumReader =
+      FastGenericDatumReader<BenchmarkTestObject> fastGenericDatumReader =
           new FastGenericDatumReader<>(BenchmarkTestObject.SCHEMA$);
       deserializer = new AvroGenericDeserializer<>(fastGenericDatumReader);
     } else {

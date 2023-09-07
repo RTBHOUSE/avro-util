@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 
 /**
  * Utility class to generate and reuse FastDatumReader/Writer. The cache key is schema object.
@@ -47,8 +46,8 @@ public class FastDatumReaderWriterUtil {
   private static final ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
 
   //TODO :  LRU cache
-  private static final Map<SchemaPair, FastGenericDatumReader<?, ?>> fastGenericDatumReaderCache = new FastAvroConcurrentHashMap<>();
-  private static final Map<Schema, FastGenericDatumWriter<?, ?>> fastGenericDatumWriterCache = new WeakIdentityHashMap<>();
+  private static final Map<SchemaPair, FastGenericDatumReader<?>> fastGenericDatumReaderCache = new FastAvroConcurrentHashMap<>();
+  private static final Map<Schema, FastGenericDatumWriter<?>> fastGenericDatumWriterCache = new WeakIdentityHashMap<>();
 
   private static final Map<SchemaPair, FastSpecificDatumReader<?>> fastSpecificDatumReaderCache = new FastAvroConcurrentHashMap<>();
   private static final Map<Schema, FastSpecificDatumWriter<?>> fastSpecificDatumWriterCache = new WeakIdentityHashMap<>();
@@ -56,22 +55,22 @@ public class FastDatumReaderWriterUtil {
   private FastDatumReaderWriterUtil() {
   }
 
-  public static <T, U extends GenericData> FastGenericDatumReader<T, U> getFastGenericDatumReader(Schema schema) {
-    return (FastGenericDatumReader<T, U>) getFastGenericDatumReader(schema, schema);
+  public static <T> FastGenericDatumReader<T> getFastGenericDatumReader(Schema schema) {
+    return (FastGenericDatumReader<T>) getFastGenericDatumReader(schema, schema);
   }
 
-  public static <T, U extends GenericData> FastGenericDatumReader<T, U> getFastGenericDatumReader(Schema writerSchema, Schema readerSchema) {
+  public static <T> FastGenericDatumReader<T> getFastGenericDatumReader(Schema writerSchema, Schema readerSchema) {
     SchemaPair schemaPair = new SchemaPair(writerSchema, readerSchema);
-    return (FastGenericDatumReader<T, U>) fastGenericDatumReaderCache.computeIfAbsent(schemaPair, key -> new FastGenericDatumReader<>(writerSchema, readerSchema));
+    return (FastGenericDatumReader<T>) fastGenericDatumReaderCache.computeIfAbsent(schemaPair, key -> new FastGenericDatumReader<>(writerSchema, readerSchema));
   }
 
-  public static <T, U extends GenericData> FastGenericDatumWriter<T, U> getFastGenericDatumWriter(Schema writerSchema) {
-    FastGenericDatumWriter<T, U> fastDatumWriter;
+  public static <T> FastGenericDatumWriter<T> getFastGenericDatumWriter(Schema writerSchema) {
+    FastGenericDatumWriter<T> fastDatumWriter;
 
     // lookup cache and read lock
     reentrantReadWriteLock.readLock().lock();
     try {
-      fastDatumWriter = (FastGenericDatumWriter<T, U>) fastGenericDatumWriterCache.get(writerSchema);
+      fastDatumWriter = (FastGenericDatumWriter<T>) fastGenericDatumWriterCache.get(writerSchema);
     } finally {
       reentrantReadWriteLock.readLock().unlock();
     }

@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Generic {@link DatumWriter} backed by generated serialization code.
  */
-public class FastGenericDatumWriter<T, U extends GenericData> implements DatumWriter<T> {
+public class FastGenericDatumWriter<T> implements DatumWriter<T> {
   private static final Logger LOGGER = LoggerFactory.getLogger(FastGenericDatumWriter.class);
   private Schema writerSchema;
-  private final U modelData;
+  private final GenericData modelData;
   private final FastSerdeCache cache;
   private FastSerializer<T> cachedFastSerializer;
 
@@ -23,7 +23,7 @@ public class FastGenericDatumWriter<T, U extends GenericData> implements DatumWr
     this(schema, null, null);
   }
 
-  public FastGenericDatumWriter(Schema schema, U modelData) {
+  public FastGenericDatumWriter(Schema schema, GenericData modelData) {
     this(schema, modelData, null);
   }
 
@@ -31,7 +31,7 @@ public class FastGenericDatumWriter<T, U extends GenericData> implements DatumWr
     this(schema, null, cache);
   }
 
-  public FastGenericDatumWriter(Schema schema, U modelData, FastSerdeCache cache) {
+  public FastGenericDatumWriter(Schema schema, GenericData modelData, FastSerdeCache cache) {
     this.writerSchema = schema;
     this.modelData = modelData;
     this.cache = cache != null ? cache : FastSerdeCache.getDefaultInstance();
@@ -65,9 +65,7 @@ public class FastGenericDatumWriter<T, U extends GenericData> implements DatumWr
       fastSerializer = cachedFastSerializer;
     } else {
       fastSerializer = getFastSerializerFromCache(cache, writerSchema, modelData);
-      if (!isFastSerializer(fastSerializer)) {
-        // don't cache
-      } else {
+      if (isFastSerializer(fastSerializer)) {
         cachedFastSerializer = fastSerializer;
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("FastSerializer has been generated and cached for writer schema: [" + writerSchema + "]");
@@ -79,22 +77,21 @@ public class FastGenericDatumWriter<T, U extends GenericData> implements DatumWr
   }
 
   @SuppressWarnings("unchecked")
-  protected FastSerializer<T> getFastSerializerFromCache(FastSerdeCache fastSerdeCache, Schema schema, U modelData) {
+  protected FastSerializer<T> getFastSerializerFromCache(FastSerdeCache fastSerdeCache, Schema schema, GenericData modelData) {
     return (FastSerializer<T>) fastSerdeCache.getFastGenericSerializer(schema, modelData);
   }
 
-  protected FastSerializer<T> getRegularAvroImpl(Schema schema, U modelData) {
+  protected FastSerializer<T> getRegularAvroImpl(Schema schema, GenericData modelData) {
     return new FastSerdeCache.FastSerializerWithAvroGenericImpl<>(schema, modelData);
   }
 
-  private static boolean isFastSerializer(FastSerializer serializer) {
+  private static boolean isFastSerializer(FastSerializer<?> serializer) {
     return !(serializer instanceof FastSerdeCache.FastSerializerWithAvroSpecificImpl
         || serializer instanceof FastSerdeCache.FastSerializerWithAvroGenericImpl);
   }
 
   /**
-   * Return a flag to indicate whether fast serializer is being used or not.
-   * @return
+   * @return flag to indicate whether fast serializer is being used or not
    */
   public boolean isFastSerializerUsed() {
     if (cachedFastSerializer == null) {
