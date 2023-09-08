@@ -545,7 +545,7 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
             fixedBytesArray.add(JExpr.lit(b));
           }
           // For specific Fixed type, Avro-1.4 will only generate the class with default constructor without params
-          JClass fixedClass = schemaAssistant.classFromSchema(schema);
+          JClass fixedClass = schemaAssistant.classFromSchema(schema, false, false, false);
           if (useGenericTypes) {
             JInvocation newFixedExpr = null;
             if (Utils.isAvro14()) {
@@ -1046,26 +1046,29 @@ public class FastDeserializerGenerator<T, U extends GenericData> extends FastDes
             elseBlock -> elseBlock.assign(fixedBuffer, JExpr.direct(" new byte[" + schema.getFixedSize() + "]"))
         );
       }
+
       body.directStatement(DECODER + ".readFixed(" + fixedBuffer.name() + ");");
 
-      JClass fixedClass = schemaAssistant.classFromSchema(schema);
+      JClass fixedClass = schemaAssistant.classFromSchema(schema, false, false, false, false);
+      JExpression valueToWrite;
+
       if (useGenericTypes) {
-        JInvocation newFixedExpr;
         if (Utils.isAvro14()) {
-          newFixedExpr = JExpr._new(fixedClass).arg(fixedBuffer);
+          valueToWrite = JExpr._new(fixedClass).arg(fixedBuffer);
         } else {
-          newFixedExpr = JExpr._new(fixedClass).arg(getSchemaExpr(schema)).arg(fixedBuffer);
+          valueToWrite = JExpr._new(fixedClass).arg(getSchemaExpr(schema)).arg(fixedBuffer);
         }
-        putFixedIntoParent.accept(body, newFixedExpr);
       } else {
         // fixed implementation in avro-1.4
         // The specific fixed type only has a constructor with empty param
-        JVar fixed = body.decl(fixedClass, getUniqueName(schema.getName()));
-        JInvocation newFixedExpr = JExpr._new(fixedClass);
-        body.assign(fixed, newFixedExpr);
+        JVar fixed = body.decl(fixedClass, getUniqueName(schema.getName()), JExpr._new(fixedClass));
         body.directStatement(fixed.name() + ".bytes(" + fixedBuffer.name() + ");");
-        putFixedIntoParent.accept(body, fixed);
+
+        valueToWrite = fixed;
       }
+
+      JExpression convertedValue = generateConversionCallIfLogicalType(valueToWrite, schema, body);
+      putFixedIntoParent.accept(body, convertedValue);
     } else {
       body.directStatement(DECODER + ".skipFixed(" + schema.getFixedSize() + ");");
     }

@@ -347,8 +347,13 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
        * by checking the associated 'Schema' in generic mode.
        */
       if (useGenericTypes && SchemaAssistant.isNamedTypeWithSchema(schemaOption)) {
-        condition = unionExpr._instanceof(rawOptionClass).cand(JExpr.invoke(JExpr.lit(AvroCompatibilityHelper.getSchemaFullName(schemaOption)), "equals")
-            .arg(JExpr.invoke(JExpr.cast(optionClass, unionExpr), "getSchema").invoke("getFullName")));
+        if (optionLogicalTypeClass != null && schemaOption.getType() == Schema.Type.FIXED) {
+          condition = unionExpr._instanceof(optionLogicalTypeClass);
+        } else {
+          String schemaFullName = AvroCompatibilityHelper.getSchemaFullName(schemaOption);
+          condition = unionExpr._instanceof(rawOptionClass).cand(JExpr.invoke(JExpr.lit(schemaFullName), "equals")
+                  .arg(JExpr.invoke(JExpr.cast(optionClass, unionExpr), "getSchema").invoke("getFullName")));
+        }
       } else {
         if (unionExpr instanceof JVar && ((JVar)unionExpr).type().equals(rawOptionClass)) {
           condition = null;
@@ -382,9 +387,17 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
   }
 
   private void processFixed(Schema fixedSchema, JExpression fixedValueExpression, JBlock body) {
-    JClass fixedClass = schemaAssistant.classFromSchema(fixedSchema);
+    JClass fixedClass = schemaAssistant.classFromSchema(fixedSchema, true, false, false, false);
+    JExpression fixedValueToWrite;
+
+    if (schemaAssistant.logicalTypeEnabled(fixedSchema)) {
+      fixedValueToWrite = generateConversionToRawType(fixedSchema, fixedValueExpression, body);
+    } else {
+      fixedValueToWrite = fixedValueExpression;
+    }
+
     body.invoke(JExpr.direct(ENCODER), "writeFixed")
-        .arg(JExpr.invoke(JExpr.cast(fixedClass, fixedValueExpression), "bytes"));
+        .arg(JExpr.invoke(JExpr.cast(fixedClass, fixedValueToWrite), "bytes"));
   }
 
   private void processEnum(Schema enumSchema, JExpression enumValueExpression, JBlock body) {
@@ -445,17 +458,8 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
     JExpression writeFunctionArgument;
 
     if (logicalTypeEnabled(primitiveSchema)) {
-      JVar convertedValue = body.decl(codeModel.ref(Object.class), getUniqueName("convertedValue"), primitiveValueExpression);
-      JFieldRef schemaFieldRef = injectLogicalTypeSchema(primitiveSchema);
-
-      body.assign(convertedValue, codeModel.ref(Conversions.class)
-              .staticInvoke("convertToRawType")
-              .arg(convertedValue)
-              .arg(schemaFieldRef)
-              .arg(schemaFieldRef.invoke("getLogicalType"))
-              .arg(getConversionRef(primitiveSchema.getLogicalType())));
-
-      writeFunctionArgument = JExpr.cast(primitiveClass, convertedValue);
+      JVar convertedValueVar = generateConversionToRawType(primitiveSchema, primitiveValueExpression, body);
+      writeFunctionArgument = JExpr.cast(primitiveClass, convertedValueVar);
     } else {
       writeFunctionArgument = cast ? JExpr.cast(primitiveClass, primitiveValueExpression) : primitiveValueExpression;
     }
@@ -488,6 +492,20 @@ public class FastSerializerGenerator<T, U extends GenericData> extends FastSerde
     }
 
     body.invoke(JExpr.direct(ENCODER), writeFunction).arg(writeFunctionArgument);
+  }
+
+  private JVar generateConversionToRawType(Schema schemaWithLogicalType, JExpression initialExpression, JBlock body) {
+    JVar convertedValue = body.decl(codeModel.ref(Object.class), getUniqueName("convertedValue"), initialExpression);
+    JFieldRef schemaFieldRef = injectLogicalTypeSchema(schemaWithLogicalType);
+
+    body.assign(convertedValue, codeModel.ref(Conversions.class)
+            .staticInvoke("convertToRawType")
+            .arg(convertedValue)
+            .arg(schemaFieldRef)
+            .arg(schemaFieldRef.invoke("getLogicalType"))
+            .arg(getConversionRef(schemaWithLogicalType.getLogicalType())));
+
+    return convertedValue;
   }
 
   private boolean methodAlreadyDefined(final Schema schema) {
