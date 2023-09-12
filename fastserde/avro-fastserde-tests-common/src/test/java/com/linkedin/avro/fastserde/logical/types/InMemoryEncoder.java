@@ -3,7 +3,9 @@ package com.linkedin.avro.fastserde.logical.types;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
+import org.apache.avro.Schema;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DecoderFactory;
@@ -11,12 +13,24 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.util.Utf8;
 
 import com.linkedin.avroutil1.compatibility.AvroCompatibilityHelper;
+import com.linkedin.avroutil1.compatibility.SchemaNormalization;
 
 public class InMemoryEncoder extends Encoder {
 
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     private final BinaryEncoder binaryEncoder = AvroCompatibilityHelper.newBinaryEncoder(baos);
+
+    public InMemoryEncoder(Schema schema) {
+        final int v1HeaderLength = 10;
+        byte[] v1Header = ByteBuffer.wrap(new byte[v1HeaderLength])
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .put(new byte[]{(byte) 0xC3, (byte) 0x01}) // BinaryMessageEncoder.V1_HEADER
+                .putLong(SchemaNormalization.parsingFingerprint64(schema))
+                .array();
+
+        baos.write(v1Header, 0, v1Header.length);
+    }
 
     public BinaryDecoder toDecoder() {
         return DecoderFactory.get().binaryDecoder(toByteArray(), null);

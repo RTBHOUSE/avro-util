@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +25,7 @@ import org.apache.avro.data.TimeConversions;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
@@ -44,11 +44,9 @@ import com.linkedin.avro.fastserde.FastSpecificDeserializerGenerator;
 import com.linkedin.avro.fastserde.FastSpecificSerializerGenerator;
 import com.linkedin.avroutil1.compatibility.AvroCompatibilityHelperCommon;
 import com.linkedin.avroutil1.compatibility.AvroVersion;
-import com.linkedin.avroutil1.compatibility.SchemaNormalization;
 
 public abstract class LogicalTypesTestBase {
 
-    private final int v1HeaderLength = 10;
     private final File classesDir;
     private final ClassLoader classLoader;
 
@@ -92,14 +90,14 @@ public abstract class LogicalTypesTestBase {
         }
     }
 
-    protected <T> byte[] serialize(FastSerializer<T> fastSerializer, T data) throws IOException {
-        InMemoryEncoder encoder = new InMemoryEncoder();
+    protected <T extends GenericRecord> byte[] serialize(FastSerializer<T> fastSerializer, T data) throws IOException {
+        InMemoryEncoder encoder = new InMemoryEncoder(data.getSchema());
         fastSerializer.serialize(data, encoder);
         return encoder.toByteArray();
     }
 
-    protected <T> byte[] serialize(DatumWriter<T> datumWriter, T data) throws IOException {
-        InMemoryEncoder encoder = new InMemoryEncoder();
+    protected <T extends GenericRecord> byte[] serialize(DatumWriter<T> datumWriter, T data) throws IOException {
+        InMemoryEncoder encoder = new InMemoryEncoder(data.getSchema());
         datumWriter.write(data, encoder);
 
         return encoder.toByteArray();
@@ -146,22 +144,15 @@ public abstract class LogicalTypesTestBase {
         byte[] fastSpecificBytes = serialize(fastSpecificSerializer, data);
         byte[] genericBytes = serialize(genericDatumWriter, data);
         byte[] specificBytes = serialize(specificDatumWriter, data);
-        byte[] bytesWithHeader = toByteBuffer.apply(data).array(); // contains 10 extra bytes at the beginning
-
-        byte[] expectedHeaderBytes = ByteBuffer.wrap(new byte[v1HeaderLength])
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .put(new byte[]{(byte) 0xC3, (byte) 0x01}) // BinaryMessageEncoder.V1_HEADER
-                .putLong(SchemaNormalization.parsingFingerprint64(schema))
-                .array();
+        byte[] defaultBytes = toByteBuffer.apply(data).array();
 
         // then all 5 serializing methods should return the same array of bytes
-        Assert.assertEquals(Arrays.copyOf(bytesWithHeader, v1HeaderLength), expectedHeaderBytes);
-        Assert.assertEquals(fastGenericBytes, dropV1Header(bytesWithHeader));
-        Assert.assertEquals(fastGenericBytes, fastSpecificBytes);
-        Assert.assertEquals(fastGenericBytes, genericBytes);
-        Assert.assertEquals(fastGenericBytes, specificBytes);
+        Assert.assertEquals(fastGenericBytes, defaultBytes);
+        Assert.assertEquals(fastSpecificBytes, defaultBytes);
+        Assert.assertEquals(genericBytes, defaultBytes);
+        Assert.assertEquals(specificBytes, defaultBytes);
 
-        return bytesWithHeader;
+        return defaultBytes;
     }
 
     protected <T extends SpecificRecordBase> T verifyDeserializers(byte[] bytesWithHeader,
@@ -217,6 +208,7 @@ public abstract class LogicalTypesTestBase {
     }
 
     protected byte[] dropV1Header(byte[] bytesWithHeader) {
+        final int v1HeaderLength = 10;
         return Arrays.copyOfRange(bytesWithHeader, v1HeaderLength, bytesWithHeader.length);
     }
 }
