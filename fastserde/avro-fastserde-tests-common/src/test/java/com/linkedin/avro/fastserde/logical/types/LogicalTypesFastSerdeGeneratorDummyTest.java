@@ -45,28 +45,28 @@ public class LogicalTypesFastSerdeGeneratorDummyTest {
         Schema schema = FastSerdeLogicalTypesTest1.SCHEMA$;
         SpecificData specificData = new FastSerdeLogicalTypesTest1().getSpecificData();
         new FastGenericSerializerGenerator<FastSerdeLogicalTypesTest1>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateSerializer();
         new FastSpecificSerializerGenerator<FastSerdeLogicalTypesTest1>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, specificData)
                 .generateSerializer();
 
         schema = FastSerdeLogicalTypesDefined.SCHEMA$;
         specificData = new FastSerdeLogicalTypesDefined().getSpecificData();
         new FastGenericSerializerGenerator<GenericData.Record>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateSerializer();
         new FastSpecificSerializerGenerator<FastSerdeLogicalTypesDefined>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, specificData)
                 .generateSerializer();
 
         schema = FastSerdeLogicalTypesUndefined.SCHEMA$;
         specificData = new FastSerdeLogicalTypesUndefined().getSpecificData();
         new FastGenericSerializerGenerator<GenericData.Record>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateSerializer();
         new FastSpecificSerializerGenerator<FastSerdeLogicalTypesUndefined>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, specificData)
                 .generateSerializer();
     }
 
@@ -75,28 +75,28 @@ public class LogicalTypesFastSerdeGeneratorDummyTest {
         Schema schema = FastSerdeLogicalTypesTest1.SCHEMA$;
         SpecificData specificData = new FastSerdeLogicalTypesTest1().getSpecificData();
         new FastGenericDeserializerGenerator<GenericData.Record>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateDeserializer();
         new FastSpecificDeserializerGenerator<FastSerdeLogicalTypesTest1>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, specificData)
                 .generateDeserializer();
 
         schema = FastSerdeLogicalTypesDefined.SCHEMA$;
         specificData = new FastSerdeLogicalTypesDefined().getSpecificData();
         new FastGenericDeserializerGenerator<GenericData.Record>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateDeserializer();
         new FastSpecificDeserializerGenerator<FastSerdeLogicalTypesDefined>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, specificData)
                 .generateDeserializer();
 
         schema = FastSerdeLogicalTypesUndefined.SCHEMA$;
         specificData = new FastSerdeLogicalTypesUndefined().getSpecificData();
         new FastGenericDeserializerGenerator<GenericData.Record>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, toGenericModelData(specificData))
                 .generateDeserializer();
         new FastSpecificDeserializerGenerator<FastSerdeLogicalTypesUndefined>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, specificData)
                 .generateDeserializer();
     }
 
