@@ -16,6 +16,9 @@ public class FastSerdeEnums_GenericSerializer_808559686
 
     private final Schema justSimpleEnumEnumSchema0 = Schema.parse("{\"type\":\"enum\",\"name\":\"JustSimpleEnum\",\"namespace\":\"com.linkedin.avro.fastserde.generated.avro\",\"symbols\":[\"E1\",\"E2\",\"E3\",\"E4\",\"E5\"]}");
 
+    public FastSerdeEnums_GenericSerializer_808559686() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {

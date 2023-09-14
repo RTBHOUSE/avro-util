@@ -14,6 +14,9 @@ public class FastGenericSerializerGeneratorTest_shouldWriteSubRecordComplexColle
 {
 
 
+    public FastGenericSerializerGeneratorTest_shouldWriteSubRecordComplexCollectionsField_GenericSerializer_1813582373() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {
@@ -73,10 +76,10 @@ public class FastGenericSerializerGeneratorTest_shouldWriteSubRecordComplexColle
             (encoder).writeNull();
         } else {
             (encoder).writeIndex(1);
-            if (subField0 instanceof Utf8) {
-                (encoder).writeString(((Utf8) subField0));
+            if (((CharSequence) subField0) instanceof Utf8) {
+                (encoder).writeString(((Utf8)((CharSequence) subField0)));
             } else {
-                (encoder).writeString(subField0 .toString());
+                (encoder).writeString(((CharSequence) subField0).toString());
             }
         }
     }

@@ -3,6 +3,7 @@ package com.linkedin.avro.fastserde.generated.serialization.AVRO_1_10;
 
 import java.io.IOException;
 import com.linkedin.avro.fastserde.FastSerializer;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Encoder;
 
@@ -10,6 +11,11 @@ public class FastGenericSerializerGeneratorTest_shouldSerializeLargeRecord_Gener
     implements FastSerializer<IndexedRecord>
 {
 
+    private final GenericData modelData;
+
+    public FastGenericSerializerGeneratorTest_shouldSerializeLargeRecord_GenericSerializer_312360713(GenericData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException

@@ -10,6 +10,7 @@ import com.linkedin.avro.fastserde.FastDeserializer;
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Decoder;
@@ -19,6 +20,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
 {
 
     private final Schema readerSchema;
+    private final GenericData modelData;
     private final Schema testEnum0;
     private final Map enumMappingtestEnum0;
     private final Schema testEnumUnion0;
@@ -29,8 +31,9 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
     private final Schema testEnumUnionArrayArrayElemSchema0;
     private final Map enumMappingtestEnum3;
 
-    public FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericDeserializer_693116719_1739184158(Schema readerSchema) {
+    public FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericDeserializer_693116719_1739184158(Schema readerSchema, GenericData modelData) {
         this.readerSchema = readerSchema;
+        this.modelData = modelData;
         this.testEnum0 = readerSchema.getField("testEnum").schema();
         HashMap tempEnumMapping0 = new HashMap(3);
         tempEnumMapping0 .put(new Integer(0), new Integer(0));
@@ -71,13 +74,13 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
         if ((((reuse)!= null)&&((reuse) instanceof IndexedRecord))&&(((IndexedRecord)(reuse)).getSchema() == readerSchema)) {
             FastGenericDeserializerGeneratorTest_shouldReadEnumDefault = ((IndexedRecord)(reuse));
         } else {
-            FastGenericDeserializerGeneratorTest_shouldReadEnumDefault = new org.apache.avro.generic.GenericData.Record(readerSchema);
+            FastGenericDeserializerGeneratorTest_shouldReadEnumDefault = new GenericData.Record(readerSchema);
         }
         int enumIndex0 = (decoder.readEnum());
         GenericEnumSymbol enumValue0 = null;
         Object enumIndexLookupResult0 = enumMappingtestEnum0 .get(enumIndex0);
         if (enumIndexLookupResult0 instanceof Integer) {
-            enumValue0 = new org.apache.avro.generic.GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult0)));
+            enumValue0 = new GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult0)));
         } else {
             if (enumIndexLookupResult0 instanceof AvroTypeException) {
                 throw((AvroTypeException) enumIndexLookupResult0);
@@ -104,7 +107,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
                 GenericEnumSymbol enumValue1 = null;
                 Object enumIndexLookupResult1 = enumMappingtestEnum1 .get(enumIndex1);
                 if (enumIndexLookupResult1 instanceof Integer) {
-                    enumValue1 = new org.apache.avro.generic.GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult1)));
+                    enumValue1 = new GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult1)));
                 } else {
                     if (enumIndexLookupResult1 instanceof AvroTypeException) {
                         throw((AvroTypeException) enumIndexLookupResult1);
@@ -124,7 +127,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
             testEnumArray1 = ((List) oldArray0);
             testEnumArray1 .clear();
         } else {
-            testEnumArray1 = new org.apache.avro.generic.GenericData.Array<GenericEnumSymbol>(((int) chunkLen0), testEnumArray0);
+            testEnumArray1 = new GenericData.Array<GenericEnumSymbol>(((int) chunkLen0), testEnumArray0);
         }
         while (chunkLen0 > 0) {
             for (int counter0 = 0; (counter0 <chunkLen0); counter0 ++) {
@@ -132,7 +135,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
                 GenericEnumSymbol enumValue2 = null;
                 Object enumIndexLookupResult2 = enumMappingtestEnum2 .get(enumIndex2);
                 if (enumIndexLookupResult2 instanceof Integer) {
-                    enumValue2 = new org.apache.avro.generic.GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult2)));
+                    enumValue2 = new GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult2)));
                 } else {
                     if (enumIndexLookupResult2 instanceof AvroTypeException) {
                         throw((AvroTypeException) enumIndexLookupResult2);
@@ -157,7 +160,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
             testEnumUnionArray1 = ((List) oldArray1);
             testEnumUnionArray1 .clear();
         } else {
-            testEnumUnionArray1 = new org.apache.avro.generic.GenericData.Array<GenericEnumSymbol>(((int) chunkLen1), testEnumUnionArray0);
+            testEnumUnionArray1 = new GenericData.Array<GenericEnumSymbol>(((int) chunkLen1), testEnumUnionArray0);
         }
         while (chunkLen1 > 0) {
             for (int counter1 = 0; (counter1 <chunkLen1); counter1 ++) {
@@ -175,7 +178,7 @@ public class FastGenericDeserializerGeneratorTest_shouldReadEnumDefault_GenericD
                         GenericEnumSymbol enumValue3 = null;
                         Object enumIndexLookupResult3 = enumMappingtestEnum3 .get(enumIndex3);
                         if (enumIndexLookupResult3 instanceof Integer) {
-                            enumValue3 = new org.apache.avro.generic.GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult3)));
+                            enumValue3 = new GenericData.EnumSymbol(testEnum0, testEnum0 .getEnumSymbols().get(((Integer) enumIndexLookupResult3)));
                         } else {
                             if (enumIndexLookupResult3 instanceof AvroTypeException) {
                                 throw((AvroTypeException) enumIndexLookupResult3);
