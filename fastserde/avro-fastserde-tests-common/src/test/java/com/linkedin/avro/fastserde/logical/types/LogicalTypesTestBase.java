@@ -123,11 +123,11 @@ public abstract class LogicalTypesTestBase {
         // given
         Schema schema = data.getSchema();
         FastSerializer<T> fastGenericSerializer = new FastGenericSerializerGenerator<T>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new GenericData()))
                 .generateSerializer();
 
         FastSerializer<T> fastSpecificSerializer = new FastSpecificSerializerGenerator<T>(
-                schema, classesDir, classLoader, null)
+                schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new SpecificData()))
                 .generateSerializer();
 
         GenericDatumWriter<T> genericDatumWriter = new GenericDatumWriter<>(
@@ -163,11 +163,11 @@ public abstract class LogicalTypesTestBase {
         Supplier<Decoder> decoderSupplier = () -> DecoderFactory.get().binaryDecoder(bytes, null);
 
         FastDeserializer<GenericData.Record> fastGenericDeserializer = new FastGenericDeserializerGenerator<GenericData.Record>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new GenericData()))
                 .generateDeserializer();
 
         FastDeserializer<T> fastSpecificDeserializer = new FastSpecificDeserializerGenerator<T>(
-                schema, schema, classesDir, classLoader, null)
+                schema, schema, classesDir, classLoader, null, copyConversions(data.getSpecificData(), new SpecificData()))
                 .generateDeserializer();
 
         GenericDatumReader<GenericData.Record> genericDatumReader = new GenericDatumReader<>(
