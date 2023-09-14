@@ -8,15 +8,22 @@ import com.linkedin.avro.fastserde.FastDeserializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.io.Decoder;
+import org.apache.avro.specific.SpecificData;
 
 public class FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418
     implements FastDeserializer<com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined>
 {
 
     private final Schema readerSchema;
+    private final SpecificData modelData;
+    private final org.apache.avro.data.TimeConversions.TimeMicrosConversion conversion_time_micros = new org.apache.avro.data.TimeConversions.TimeMicrosConversion();
+    private final org.apache.avro.data.TimeConversions.TimestampMicrosConversion conversion_timestamp_micros = new org.apache.avro.data.TimeConversions.TimestampMicrosConversion();
+    private final org.apache.avro.data.TimeConversions.TimeMillisConversion conversion_time_millis = new org.apache.avro.data.TimeConversions.TimeMillisConversion();
+    private final org.apache.avro.Conversions.DecimalConversion conversion_decimal = new org.apache.avro.Conversions.DecimalConversion();
 
-    public FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418(Schema readerSchema) {
+    public FastSerdeLogicalTypesUndefined_SpecificDeserializer_1982763418_1982763418(Schema readerSchema, SpecificData modelData) {
         this.readerSchema = readerSchema;
+        this.modelData = modelData;
     }
 
     public com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined deserialize(com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined reuse, Decoder decoder)
