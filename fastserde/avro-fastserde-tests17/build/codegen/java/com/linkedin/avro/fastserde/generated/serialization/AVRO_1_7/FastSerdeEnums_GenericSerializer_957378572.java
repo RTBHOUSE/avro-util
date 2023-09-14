@@ -14,6 +14,9 @@ public class FastSerdeEnums_GenericSerializer_957378572
 {
 
 
+    public FastSerdeEnums_GenericSerializer_957378572() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {

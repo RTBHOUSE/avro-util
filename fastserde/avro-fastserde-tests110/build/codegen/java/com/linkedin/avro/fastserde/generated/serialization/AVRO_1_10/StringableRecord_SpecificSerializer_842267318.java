@@ -1,8 +1,11 @@
 
 package com.linkedin.avro.fastserde.generated.serialization.AVRO_1_10;
 
+import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +14,18 @@ import com.linkedin.avro.fastserde.generated.avro.AnotherSubRecord;
 import com.linkedin.avro.fastserde.generated.avro.StringableRecord;
 import com.linkedin.avro.fastserde.generated.avro.StringableSubRecord;
 import org.apache.avro.io.Encoder;
+import org.apache.avro.specific.SpecificData;
 import org.apache.avro.util.Utf8;
 
 public class StringableRecord_SpecificSerializer_842267318
     implements FastSerializer<StringableRecord>
 {
 
+    private final SpecificData modelData;
+
+    public StringableRecord_SpecificSerializer_842267318(SpecificData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(StringableRecord data, Encoder encoder)
         throws IOException
@@ -28,7 +37,7 @@ public class StringableRecord_SpecificSerializer_842267318
     public void serializeStringableRecord0(StringableRecord data, Encoder encoder)
         throws IOException
     {
-        (encoder).writeString(data.get(0).toString());
+        (encoder).writeString(((BigInteger) data.get(0)).toString());
         serialize_StringableRecord0(data, (encoder));
         serialize_StringableRecord1(data, (encoder));
         serialize_StringableRecord2(data, (encoder));
@@ -40,16 +49,16 @@ public class StringableRecord_SpecificSerializer_842267318
     private void serialize_StringableRecord0(StringableRecord data, Encoder encoder)
         throws IOException
     {
-        (encoder).writeString(data.get(1).toString());
-        (encoder).writeString(data.get(2).toString());
+        (encoder).writeString(((BigDecimal) data.get(1)).toString());
+        (encoder).writeString(((URI) data.get(2)).toString());
     }
 
     @SuppressWarnings("unchecked")
     private void serialize_StringableRecord1(StringableRecord data, Encoder encoder)
         throws IOException
     {
-        (encoder).writeString(data.get(3).toString());
-        (encoder).writeString(data.get(4).toString());
+        (encoder).writeString(((URL) data.get(3)).toString());
+        (encoder).writeString(((File) data.get(4)).toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +87,7 @@ public class StringableRecord_SpecificSerializer_842267318
                 (encoder).startItem();
                 String keyString0 = key0 .toString();
                 (encoder).writeString(keyString0);
-                (encoder).writeString(urlMap0 .get(key0).toString());
+                (encoder).writeString(((BigInteger) urlMap0 .get(key0)).toString());
             }
         }
         (encoder).writeMapEnd();
@@ -98,7 +107,7 @@ public class StringableRecord_SpecificSerializer_842267318
     public void serializeStringableSubRecord0(StringableSubRecord data, Encoder encoder)
         throws IOException
     {
-        (encoder).writeString(data.get(0).toString());
+        (encoder).writeString(((URI) data.get(0)).toString());
         serialize_StringableSubRecord0(data, (encoder));
     }
 
@@ -113,10 +122,10 @@ public class StringableRecord_SpecificSerializer_842267318
         } else {
             if (nullStringIntUnion0 instanceof CharSequence) {
                 (encoder).writeIndex(1);
-                if (nullStringIntUnion0 instanceof Utf8) {
-                    (encoder).writeString(((Utf8) nullStringIntUnion0));
+                if (((CharSequence) nullStringIntUnion0) instanceof Utf8) {
+                    (encoder).writeString(((Utf8)((CharSequence) nullStringIntUnion0)));
                 } else {
-                    (encoder).writeString(nullStringIntUnion0 .toString());
+                    (encoder).writeString(((CharSequence) nullStringIntUnion0).toString());
                 }
             } else {
                 if (nullStringIntUnion0 instanceof Integer) {
@@ -145,7 +154,7 @@ public class StringableRecord_SpecificSerializer_842267318
             (encoder).writeNull();
         } else {
             (encoder).writeIndex(1);
-            (encoder).writeString(stringUnion0);
+            (encoder).writeString(((String) stringUnion0).toString());
         }
     }
 

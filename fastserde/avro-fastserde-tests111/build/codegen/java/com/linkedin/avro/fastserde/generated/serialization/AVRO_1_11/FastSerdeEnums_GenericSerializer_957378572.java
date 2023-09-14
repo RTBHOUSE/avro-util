@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import com.linkedin.avro.fastserde.FastSerializer;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Encoder;
@@ -13,6 +14,11 @@ public class FastSerdeEnums_GenericSerializer_957378572
     implements FastSerializer<IndexedRecord>
 {
 
+    private final GenericData modelData;
+
+    public FastSerdeEnums_GenericSerializer_957378572(GenericData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
@@ -29,7 +35,7 @@ public class FastSerdeEnums_GenericSerializer_957378572
         if (enumValue0 instanceof Enum) {
             valueToWrite0 = ((Enum) enumValue0).ordinal();
         } else {
-            valueToWrite0 = ((org.apache.avro.generic.GenericData.EnumSymbol) enumValue0).getSchema().getEnumOrdinal(((org.apache.avro.generic.GenericData.EnumSymbol) enumValue0).toString());
+            valueToWrite0 = ((GenericData.EnumSymbol) enumValue0).getSchema().getEnumOrdinal(((GenericData.EnumSymbol) enumValue0).toString());
         }
         (encoder).writeEnum(valueToWrite0);
         serialize_FastSerdeEnums0(data, (encoder));
@@ -58,7 +64,7 @@ public class FastSerdeEnums_GenericSerializer_957378572
                         if (enumValue1 instanceof Enum) {
                             valueToWrite1 = ((Enum) enumValue1).ordinal();
                         } else {
-                            valueToWrite1 = ((org.apache.avro.generic.GenericData.EnumSymbol) enumValue1).getSchema().getEnumOrdinal(((org.apache.avro.generic.GenericData.EnumSymbol) enumValue1).toString());
+                            valueToWrite1 = ((GenericData.EnumSymbol) enumValue1).getSchema().getEnumOrdinal(((GenericData.EnumSymbol) enumValue1).toString());
                         }
                         (encoder).writeEnum(valueToWrite1);
                     }
@@ -80,7 +86,7 @@ public class FastSerdeEnums_GenericSerializer_957378572
                 if (enumValue2 instanceof Enum) {
                     valueToWrite2 = ((Enum) enumValue2).ordinal();
                 } else {
-                    valueToWrite2 = ((org.apache.avro.generic.GenericData.EnumSymbol) enumValue2).getSchema().getEnumOrdinal(((org.apache.avro.generic.GenericData.EnumSymbol) enumValue2).toString());
+                    valueToWrite2 = ((GenericData.EnumSymbol) enumValue2).getSchema().getEnumOrdinal(((GenericData.EnumSymbol) enumValue2).toString());
                 }
                 (encoder).writeEnum(valueToWrite2);
             }

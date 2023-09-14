@@ -14,6 +14,9 @@ public class FastSerdeFixed_GenericSerializer_2095283755
 {
 
 
+    public FastSerdeFixed_GenericSerializer_2095283755() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {

@@ -11,6 +11,9 @@ public class FastGenericSerializerGeneratorTest_shouldSerializeLargeRecord_Gener
 {
 
 
+    public FastGenericSerializerGeneratorTest_shouldSerializeLargeRecord_GenericSerializer_312360713() {
+    }
+
     public void serialize(IndexedRecord data, Encoder encoder)
         throws IOException
     {

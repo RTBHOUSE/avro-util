@@ -4,6 +4,7 @@ package com.linkedin.avro.fastserde.generated.serialization.AVRO_1_10;
 import java.io.IOException;
 import java.util.List;
 import com.linkedin.avro.fastserde.FastSerializer;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.util.Utf8;
@@ -12,6 +13,11 @@ public class Array_of_UNION_GenericSerializer_777827233
     implements FastSerializer<List<IndexedRecord>>
 {
 
+    private final GenericData modelData;
+
+    public Array_of_UNION_GenericSerializer_777827233(GenericData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(List<IndexedRecord> data, Encoder encoder)
         throws IOException
@@ -49,10 +55,10 @@ public class Array_of_UNION_GenericSerializer_777827233
             (encoder).writeNull();
         } else {
             (encoder).writeIndex(1);
-            if (field0 instanceof Utf8) {
-                (encoder).writeString(((Utf8) field0));
+            if (((CharSequence) field0) instanceof Utf8) {
+                (encoder).writeString(((Utf8)((CharSequence) field0)));
             } else {
-                (encoder).writeString(field0 .toString());
+                (encoder).writeString(((CharSequence) field0).toString());
             }
         }
     }
