@@ -6,11 +6,17 @@ import java.util.List;
 import com.linkedin.avro.fastserde.FastSerializer;
 import com.linkedin.avro.fastserde.generated.avro.FastSerdeLogicalTypesUndefined;
 import org.apache.avro.io.Encoder;
+import org.apache.avro.specific.SpecificData;
 
 public class FastSerdeLogicalTypesUndefined_SpecificSerializer_1982763418
     implements FastSerializer<FastSerdeLogicalTypesUndefined>
 {
 
+    private final SpecificData modelData;
+
+    public FastSerdeLogicalTypesUndefined_SpecificSerializer_1982763418(SpecificData modelData) {
+        this.modelData = modelData;
+    }
 
     public void serialize(FastSerdeLogicalTypesUndefined data, Encoder encoder)
         throws IOException
